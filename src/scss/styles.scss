@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+$white: #FBFBFB;
+$gray: #787777;
+$light-violet: #9297f7;
+$select-width-S: 160px;
+$select-width-M: 200px;
+$select-width-L: 240px;
+$select-width-XL: 280px;
+$main-border: 1px solid $gray;
+$input-div-padding: 7px;
+$font-size-main: 16px;
+$font-size-selected: 14px;
+$line-height: 1.5;
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+ul {
+    list-style-type: none;
+}
+
+@mixin input-width($width) {
+    width: calc($width - 2*$input-div-padding - 2px);
+
+}
+
+.c-select {
+    background: transparent;   
+    font-family: 'Open Sans', sans-serif;
+    font-size: $font-size-main;
+    font-weight: 400;
+    line-height: $line-height;
+    height: fit-content;
+
+    .isHidden,
+    .c-select__select {
+        display: none;
+    }
+
+    &_size_S {
+        width: $select-width-S;
+        
+        .c-select__input {
+            @include input-width($select-width-S);
+        }
+
+        .c-select__dropdown {
+            width: $select-width-S;
+        }
+    }
+
+    &_size_M {
+        width: $select-width-M;
+        
+        .c-select__input {
+            @include input-width($select-width-M);
+        }
+
+        .c-select__dropdown {
+            width: $select-width-M;
+        }
+    }
+
+    &_size_L {
+        width: $select-width-L;
+        
+        .c-select__input {
+            @include input-width($select-width-L);
+        }
+
+        .c-select__dropdown {
+            width: $select-width-L;
+        }
+    }
+
+    &_size_XL {
+        width: $select-width-XL;
+        
+        .c-select__input {
+            @include input-width($select-width-XL);
+        }
+
+        .c-select__dropdown {
+            width: $select-width-XL;
+        }
+    }
+
+    &__input {       
+        outline: 0;
+        border: $main-border;
+        border-radius: 5px;
+        box-shadow: rgba(9, 30, 66, 0.25) 0px 0px 1px 1px, rgba(9, 30, 66, 0.25) 0px 0px 1px 1px;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+    }
+
+    &__selected {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        border: $main-border;
+        min-height: calc($font-size-main*$line-height + 6px);
+        border-radius: 5px;
+        font-size: $font-size-selected;
+        padding: 3px 16px 3px 3px;
+        position: relative;
+
+        &-div {
+            display: inline-block;
+            cursor: pointer;
+            background-color: $light-violet;
+            border-radius: 5px;  
+        }
+
+        &-span {
+            padding-left: 5px;
+        }
+
+        &-remove {
+            background: red;
+            margin: 0 4px 0 4px;
+            border-left: 1px solid $white;
+            padding: 0px 4px 2px 5px;
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+    }
+
+    &__selected:hover {
+        cursor: pointer;
+    }
+
+    &__selected.active {
+        border-radius: 5px 5px 0 0;
+    }
+
+    &__input-div {
+        border-left: $main-border;
+        border-right: $main-border;
+        padding: $input-div-padding;
+        display: none;
+        position: relative;
+        width: 100%;
+    }
+
+    &__input-div.active {
+        display: block;
+    }
+
+    &__dropdown {
+        position: absolute;
+        z-index: 5;
+        border: $main-border;
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+        top: calc($font-size-main*$line-height + $input-div-padding*2 + 2px);
+        left: -1px;
+    }
+
+    &__dropdown-item {
+        background-color: aqua;
+        cursor: pointer;
+
+        &_selected {
+            background-color: $light-violet;
+            color: $white;
+        }
+    }
+
+    &__dropdown-item:last-child {
+        border-radius: 0 0 5px 5px;
+    }
+
+    &__dropdown-item:hover {
+        background-color: $light-violet;
+    }
+
+    &__arrow {
+        width: 14px;
+        height: 14px;
+        background: red;
+        position: absolute;
+        right: 2px;
+        top: 6px
+    }
+}
