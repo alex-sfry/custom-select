@@ -10,6 +10,7 @@ $select-width-XL: 280px;
 $main-border: 1px solid $gray;
 $input-div-padding: 7px;
 $font-size-main: 16px;
+$font-size-medium: 14px;
 $font-size-selected: 14px;
 $line-height: 1.5;
 
@@ -26,9 +27,20 @@ ul {
     list-style-type: none;
 }
 
-@mixin input-width($width) {
-    width: calc($width - 2*$input-div-padding - 2px);
+@mixin width($width) {
+    width: $width;
 
+    .c-select__input {
+        width: calc($width - 2*$input-div-padding - 2px);
+    }
+
+    .c-select__dropdown {
+        width: $width;
+    }
+
+    .c-select__selected-div {
+        max-width: calc($width - 40px);          
+    }
 }
 
 .c-select {
@@ -37,7 +49,6 @@ ul {
     font-size: $font-size-main;
     font-weight: 400;
     line-height: $line-height;
-    height: fit-content;
 
     .isHidden,
     .c-select__select {
@@ -45,51 +56,19 @@ ul {
     }
 
     &_size_S {
-        width: $select-width-S;
-        
-        .c-select__input {
-            @include input-width($select-width-S);
-        }
-
-        .c-select__dropdown {
-            width: $select-width-S;
-        }
+        @include width($select-width-S)
     }
 
     &_size_M {
-        width: $select-width-M;
-        
-        .c-select__input {
-            @include input-width($select-width-M);
-        }
-
-        .c-select__dropdown {
-            width: $select-width-M;
-        }
+        @include width($select-width-M)
     }
 
     &_size_L {
-        width: $select-width-L;
-        
-        .c-select__input {
-            @include input-width($select-width-L);
-        }
-
-        .c-select__dropdown {
-            width: $select-width-L;
-        }
+        @include width($select-width-L)
     }
 
     &_size_XL {
-        width: $select-width-XL;
-        
-        .c-select__input {
-            @include input-width($select-width-XL);
-        }
-
-        .c-select__dropdown {
-            width: $select-width-XL;
-        }
+        @include width($select-width-XL)
     }
 
     &__input {       
@@ -114,21 +93,29 @@ ul {
         position: relative;
 
         &-div {
-            display: inline-block;
             cursor: pointer;
             background-color: $light-violet;
-            border-radius: 5px;  
+            border-radius: 5px;
+            height: calc($font-size-medium*$line-height);
+            width: fit-content;
+            display: flex;
+            align-items: center;
         }
 
-        &-span {
+        &-p {
+            display: inline-block;
             padding-left: 5px;
+            width: min-content;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow:ellipsis;
         }
 
         &-remove {
             background: red;
-            margin: 0 4px 0 4px;
+            margin: 0 4px 0 5px;
             border-left: 1px solid $white;
-            padding: 0px 4px 2px 5px;
+            padding: 0 4px 0 5px;
             width: 14px;
             height: 14px;
             cursor: pointer;

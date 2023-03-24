@@ -1,26 +1,33 @@
 import './scss/styles.scss';
 
-async function initSelect(idSelect, optionList) {
+async function initSelect(idSelect, elemSize, optionList, parentContainer) {
     if (!optionList) return;
+    await createHTML(idSelect);
     await createOptionList('option', optionList); //create options for native <select>
-    await createOptionList('li', optionList); //create option items for custom select (p elements inside div)   
+    await createOptionList('li', optionList); //create option items for custom select (p elements inside div)
+
     const OptionItemState = new Map();
     optionList.forEach(item => OptionItemState.set(item, false));
-    setEventListeners();
+
+    const wrapperDiv = document.querySelector(`#${idSelect}`);
+    ['S', 'M', 'L', 'XL'].includes(elemSize) && wrapperDiv.classList.add(`c-select_size_${elemSize}`);
+
     //first option item is empty by default
-    const firstOptionItem = document.querySelector(`${idSelect} .c-select__dropdown-item:first-of-type`);
-    const selectOptions = document.querySelectorAll(`${idSelect} option`);
-    const optionItems = document.querySelectorAll(`${idSelect} .c-select__dropdown-item`);
+    const firstOptionItem = document.querySelector(`#${idSelect} .c-select__dropdown-item:first-of-type`);
+    const selectOptions = document.querySelectorAll(`#${idSelect} option`);
+    const optionItems = document.querySelectorAll(`#${idSelect} .c-select__dropdown-item`);
+    setEventListeners();
     //pass native <select> options to custom select (li elements inside div)
     selectOptions.forEach((item, index) => optionItems[index].textContent = item.value);
     filterOptionItems();
+
     //function creates elements
     async function createOptionList(tagName, optionList) {
-        const selectOptions = document.querySelector(`${idSelect} .c-select__select`);
+        const selectOptions = document.querySelector(`#${idSelect} .c-select__select`);
 
         for (let i = 0; i < optionList.length; i++) {
             const optionItem = document.createElement(tagName);
-            const dropdownItemList = document.querySelector(`${idSelect} .c-select__dropdown`);
+            const dropdownItemList = document.querySelector(`#${idSelect} .c-select__dropdown`);
             tagName === 'li' && optionItem.classList.add("c-select__dropdown-item");
             optionItem.textContent = optionList[i];
             if (tagName === 'option') optionItem.value = optionList[i];
@@ -30,15 +37,49 @@ async function initSelect(idSelect, optionList) {
     }
 
     function setEventListeners() {
-        document.querySelector(`${idSelect} .c-select__option-list`).addEventListener('click', handleClick);
+        document.querySelector(`#${idSelect} .c-select__option-list`).addEventListener('click', handleClick);
+        document.querySelector('body').addEventListener('click', handleOutsideClick);
+    }
+
+    function handleOutsideClick(e) {
+        if (document.querySelector(`#${idSelect} .c-select__selected`).classList.contains('active')) {
+            if (isClickedOutside(e)) {
+                document.querySelector(`#${idSelect} .c-select__selected`).classList.remove('active');
+                document.querySelector(`#${idSelect} .c-select__input-div`).classList.remove('active');
+            }            
+        }      
+    }
+
+    function isClickedOutside(e) {
+        const classListArr = [
+            'c-select__selected',
+            'c-select__input-div',
+            'c-select__input',
+            'c-select__dropdown-item',
+            'c-select__dropdown',
+            'c-select__arrow',
+            'c-select__selected-div',
+            'c-select__selected-p',
+            'c-select__selected-remove'
+        ];
+        let isOutside = true;
+        classListArr.forEach(item => e.target.classList.contains(item) ? isOutside = false : undefined);
+        return isOutside;
     }
 
     function handleClick(e) {
-        const input = document.querySelector(`${idSelect} .c-select__input`);
-        const selectedDiv = document.querySelector(`${idSelect} .c-select__selected`);
-        const inputDiv = document.querySelector(`${idSelect} .c-select__input-div`);
+        const input = document.querySelector(`#${idSelect} .c-select__input`);
+        const selectedDiv = document.querySelector(`#${idSelect} .c-select__selected`);
+        const inputDiv = document.querySelector(`#${idSelect} .c-select__input-div`);
+        const activeSelects = document.querySelectorAll('.c-select__option-list .active');
 
-        if (e.target.classList.contains('c-select__selected')) {
+        if (e.target.classList.contains('c-select__selected') || e.target.classList.contains('c-select__arrow')) {
+            if (activeSelects.length >= 2) {
+                activeSelects.forEach(select => {
+                    select.dataset.id !== idSelect && select.classList.toggle('active');
+                });                    
+            }
+
             input.value = '';
             input.dispatchEvent(new Event('input'));
             selectedDiv.classList.toggle('active');
@@ -60,13 +101,13 @@ async function initSelect(idSelect, optionList) {
         function addToSelected() {
             [...selectOptions].find(option => option.textContent === e.target.textContent).selected = true;
             const selectedItemDiv = document.createElement('div');
-            const selectedItemSpan = document.createElement('span');
+            const selectedItemP = document.createElement('p');
             const removeItemBtn = document.createElement('button');
             selectedItemDiv.classList.add('c-select__selected-div');
-            selectedItemSpan.classList.add('c-select__selected-span');
+            selectedItemP.classList.add('c-select__selected-p');
             removeItemBtn.classList.add('c-select__selected-remove');
-            selectedItemSpan.textContent = e.target.textContent;
-            selectedItemDiv.appendChild(selectedItemSpan);
+            selectedItemP.textContent = e.target.textContent;
+            selectedItemDiv.appendChild(selectedItemP);
             selectedItemDiv.appendChild(removeItemBtn);       
             selectedDiv.appendChild(selectedItemDiv);
         }
@@ -81,8 +122,8 @@ async function initSelect(idSelect, optionList) {
     }
     //filter function
     function filterOptionItems() {
-        document.querySelector(`${idSelect} .c-select__input`).addEventListener('input', (e) => {
-            const dropdownItems = document.querySelectorAll(`${idSelect} .c-select__dropdown-item`);
+        document.querySelector(`#${idSelect} .c-select__input`).addEventListener('input', (e) => {
+            const dropdownItems = document.querySelectorAll(`#${idSelect} .c-select__dropdown-item`);
 
             dropdownItems.forEach((item, index) => {
                 !item.textContent.toLowerCase().includes(e.target.value.toLowerCase()) && index !== 0
@@ -96,7 +137,68 @@ async function initSelect(idSelect, optionList) {
             } else firstOptionItem.textContent = '';
         });
     }
+
+    async function createHTML() {
+        const classList = {
+            wrapper: 'c-select',
+            select: 'c-select__select',
+            optionList: 'c-select__option-list',
+            selected: 'c-select__selected',
+            inputDiv: 'c-select__input-div',
+            input: 'c-select__input',
+            dropdown: 'c-select__dropdown',
+            dropdownItem: 'c-select__dropdown-item',
+            arrow: 'c-select__arrow',
+            selectedDiv: 'c-select__selected-div',
+            selectedP: 'c-select__selected-p',
+            selectedRemove: 'c-select__selected-remove'
+        };
+        
+        const selectElem = document.createElement('select');
+        const selectOptionElem = document.createElement('option');
+        const inputElem = document.createElement('input');
+        const ulElem = document.createElement('ul');
+        const liElem = document.createElement('li');
+        const container = document.querySelector(`.${parentContainer}`);
+        let divElem = createDiv();
+
+        selectElem.className = classList.select;
+        inputElem.className = classList.input;
+        ulElem.className = classList.dropdown;
+        liElem.className = classList.dropdownItem;
+        divElem.className = classList.wrapper;
+
+        selectElem.appendChild(selectOptionElem);
+        ulElem.appendChild(liElem);
+        divElem.appendChild(selectElem);
+        container.appendChild(divElem);
+        const wrapper = container.querySelector(`.${classList.wrapper}`);
+        wrapper.id = idSelect;
+        divElem = createDiv();
+        divElem.className = classList.optionList;
+        wrapper.appendChild(divElem);
+        const optionList = wrapper.querySelector(`.${classList.optionList}`);
+        divElem = createDiv();
+        divElem.className = classList.selected;
+        divElem.dataset.id = idSelect;
+        optionList.appendChild(divElem);
+        divElem = createDiv();
+        divElem.className = classList.inputDiv;
+        divElem.dataset.id = idSelect;
+        optionList.appendChild(divElem);
+        const selected = optionList.querySelector(`.${classList.selected}`);
+        divElem = createDiv();
+        divElem.className = classList.arrow;
+        selected.appendChild(divElem);
+        const inputDiv = optionList.querySelector(`.${classList.inputDiv}`);
+        inputDiv.appendChild(inputElem);
+        inputDiv.appendChild(ulElem);
+
+        function createDiv() {
+            return document.createElement('div');
+        }
+    }
 }
 
-initSelect("#c-select", ["Fleet carrier administration", "Orbital 2", "Orbital 3"]);
-initSelect("#c-select-2", ["Orbital 4", "Orbital 5", "Orbital 6"]);
+initSelect("c-select", 'M', ["Fleet carrier administration", "Orbital 2", "Orbital 3"], 'container-1');
+initSelect("c-select-2", 'M', ["Orbital 4", "Orbital 5", "Orbital 6"], 'container-2');
