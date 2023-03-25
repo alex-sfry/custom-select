@@ -1,18 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
-
-$white: #FBFBFB;
-$gray: #787777;
-$light-violet: #9297f7;
-$select-width-S: 160px;
-$select-width-M: 200px;
-$select-width-L: 240px;
-$select-width-XL: 280px;
-$main-border: 1px solid $gray;
-$input-div-padding: 7px;
-$font-size-main: 16px;
-$font-size-medium: 14px;
-$font-size-selected: 14px;
-$line-height: 1.5;
+@import 'variables.scss';
 
 *,
 *::before,
@@ -31,20 +18,16 @@ ul {
     width: $width;
 
     .c-select__input {
-        width: calc($width - 2*$input-div-padding - 2px);
+        width: calc($width - 2*$input-div-padding - $offset);
     }
 
     .c-select__dropdown {
         width: $width;
     }
-
-    .c-select__selected-div {
-        max-width: calc($width - 40px);          
-    }
 }
 
 .c-select {
-    background: transparent;   
+    background: transparent;
     font-family: 'Open Sans', sans-serif;
     font-size: $font-size-main;
     font-weight: 400;
@@ -56,22 +39,34 @@ ul {
     }
 
     &_size_S {
-        @include width($select-width-S)
+        @include width($select-width-S);
     }
 
     &_size_M {
-        @include width($select-width-M)
+        @include width($select-width-M);
     }
 
     &_size_L {
-        @include width($select-width-L)
+        @include width($select-width-L);
     }
 
     &_size_XL {
-        @include width($select-width-XL)
+        @include width($select-width-XL);
     }
 
-    &__input {       
+    &_size_parent {
+        width: $select-width-parent;
+
+        .c-select__input {
+            width: calc($select-width-parent);
+        }
+        
+        .c-select__dropdown {
+            width: calc($select-width-parent + $offset);
+        }
+    }
+
+    &__input {
         outline: 0;
         border: $main-border;
         border-radius: 5px;
@@ -88,9 +83,10 @@ ul {
         border: $main-border;
         min-height: calc($font-size-main*$line-height + 6px);
         border-radius: 5px;
-        font-size: $font-size-selected;
-        padding: 3px 16px 3px 3px;
+        font-size: $font-size-medium;
+        padding: 3px 18px 3px 3px;
         position: relative;
+
 
         &-div {
             cursor: pointer;
@@ -108,7 +104,7 @@ ul {
             width: min-content;
             overflow: hidden;
             white-space: nowrap;
-            text-overflow:ellipsis;
+            text-overflow: ellipsis;
         }
 
         &-remove {
@@ -149,13 +145,37 @@ ul {
         border: $main-border;
         border-top: none;
         border-radius: 0 0 5px 5px;
-        top: calc($font-size-main*$line-height + $input-div-padding*2 + 2px);
+        top: calc($font-size-main*$line-height + $input-div-padding*2 + $offset);
         left: -1px;
+        height: $height-option-list;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        &::-webkit-scrollbar, 
+        &::-webkit-scrollbar-thumb {
+            width: 12px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: #FBFBFB;
+            border-radius: 0 0 5px 0;
+            background-color: aqua;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background-color: $gray;	
+            border: none;
+        }
     }
 
     &__dropdown-item {
         background-color: aqua;
         cursor: pointer;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding: 0 5px 0 5px;
 
         &_selected {
             background-color: $light-violet;
@@ -163,7 +183,7 @@ ul {
         }
     }
 
-    &__dropdown-item:last-child {
+    &__dropdown-item:last-child:not(::-webkit-scrollbar) {
         border-radius: 0 0 5px 5px;
     }
 
@@ -177,6 +197,6 @@ ul {
         background: red;
         position: absolute;
         right: 2px;
-        top: 6px
+        top: 7px
     }
 }

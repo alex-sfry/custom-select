@@ -1,17 +1,16 @@
 import './scss/styles.scss';
 
-async function initSelect(idSelect, elemSize, optionList, parentContainer) {
+function initSelect(idSelect, elemSize, optionList, parentContainer) {
     if (!optionList) return;
-    await createHTML(idSelect);
-    await createOptionList('option', optionList); //create options for native <select>
-    await createOptionList('li', optionList); //create option items for custom select (p elements inside div)
+    createHTML(idSelect);
+    createOptionList('option', optionList); //create options for native <select>
+    createOptionList('li', optionList); //create option items for custom select (p elements inside div)
 
-    const OptionItemState = new Map();
-    optionList.forEach(item => OptionItemState.set(item, false));
+    const OptionItemState = new Map(); //useless for now
+    optionList.forEach(item => OptionItemState.set(item, false)); //useless for now
 
     const wrapperDiv = document.querySelector(`#${idSelect}`);
-    ['S', 'M', 'L', 'XL'].includes(elemSize) && wrapperDiv.classList.add(`c-select_size_${elemSize}`);
-
+    ['S', 'M', 'L', 'XL', 'parent'].includes(elemSize) && wrapperDiv.classList.add(`c-select_size_${elemSize}`);
     //first option item is empty by default
     const firstOptionItem = document.querySelector(`#${idSelect} .c-select__dropdown-item:first-of-type`);
     const selectOptions = document.querySelectorAll(`#${idSelect} option`);
@@ -137,8 +136,8 @@ async function initSelect(idSelect, elemSize, optionList, parentContainer) {
             } else firstOptionItem.textContent = '';
         });
     }
-
-    async function createHTML() {
+    //create initial HTML and put it inside parent element
+    function createHTML() {
         const classList = {
             wrapper: 'c-select',
             select: 'c-select__select',
@@ -160,7 +159,7 @@ async function initSelect(idSelect, elemSize, optionList, parentContainer) {
         const ulElem = document.createElement('ul');
         const liElem = document.createElement('li');
         const container = document.querySelector(`.${parentContainer}`);
-        let divElem = createDiv();
+        let divElem = createDiv(); // use to create mu;tiple divs elements
 
         selectElem.className = classList.select;
         inputElem.className = classList.input;
@@ -200,5 +199,9 @@ async function initSelect(idSelect, elemSize, optionList, parentContainer) {
     }
 }
 
-initSelect("c-select", 'M', ["Fleet carrier administration", "Orbital 2", "Orbital 3"], 'container-1');
-initSelect("c-select-2", 'M', ["Orbital 4", "Orbital 5", "Orbital 6"], 'container-2');
+const uniqueID = () => Math.floor(Math.random() * Date.now()).toString();
+
+initSelect(`c-select${uniqueID()}`, 'parent', ["Fleet carrier administration", "Orbital 2", "Orbital 3",
+     "Orbital 4", "Orbital 5", "Orbital 6"], 'container-1');
+initSelect(`c-select${uniqueID()}`, 'parent', ["Orbital 4", "Orbital 5", "Orbital 6", 
+    "Fleet carrier administration", "Orbital 2", "Orbital 3"], 'container-2');
