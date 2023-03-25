@@ -1,21 +1,26 @@
 import './scss/styles.scss';
 
-function initSelect(idSelect, elemSize, optionList, parentContainer) {
-    if (!optionList) return;
+function initSelect(config/* elemSize, optionList, parentContainer */) {
+    if (!config.optionList) return;
+    const uniqueID = () => Math.floor(Math.random() * Date.now()).toString();
+    const idSelect = `c-select${uniqueID()}`; //select element unique id
     createHTML(idSelect);
-    createOptionList('option', optionList); //create options for native <select>
-    createOptionList('li', optionList); //create option items for custom select (p elements inside div)
+    createOptionList('option', config.optionList); //create options for native <select>
+    createOptionList('li', config.optionList); //create option items for custom select (p elements inside div)
 
     const OptionItemState = new Map(); //useless for now
-    optionList.forEach(item => OptionItemState.set(item, false)); //useless for now
+    config.optionList.forEach(item => OptionItemState.set(item, false)); //useless for now
 
     const wrapperDiv = document.querySelector(`#${idSelect}`);
-    ['S', 'M', 'L', 'XL', 'parent'].includes(elemSize) && wrapperDiv.classList.add(`c-select_size_${elemSize}`);
+    ['S', 'M', 'L', 'XL', 'parent'].includes(config.elemSize) &&
+        wrapperDiv.classList.add(`c-select_size_${config.elemSize}`);
+
     //first option item is empty by default
     const firstOptionItem = document.querySelector(`#${idSelect} .c-select__dropdown-item:first-of-type`);
     const selectOptions = document.querySelectorAll(`#${idSelect} option`);
     const optionItems = document.querySelectorAll(`#${idSelect} .c-select__dropdown-item`);
     setEventListeners();
+
     //pass native <select> options to custom select (li elements inside div)
     selectOptions.forEach((item, index) => optionItems[index].textContent = item.value);
     filterOptionItems();
@@ -45,8 +50,9 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
             if (isClickedOutside(e)) {
                 document.querySelector(`#${idSelect} .c-select__selected`).classList.remove('active');
                 document.querySelector(`#${idSelect} .c-select__input-div`).classList.remove('active');
-            }            
-        }      
+                document.querySelector(`#${idSelect} .c-select__arrow-icon`).classList.remove('active');
+            }
+        }
     }
 
     function isClickedOutside(e) {
@@ -57,6 +63,7 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
             'c-select__dropdown-item',
             'c-select__dropdown',
             'c-select__arrow',
+            'c-select__arrow-icon',
             'c-select__selected-div',
             'c-select__selected-p',
             'c-select__selected-remove'
@@ -71,18 +78,22 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
         const selectedDiv = document.querySelector(`#${idSelect} .c-select__selected`);
         const inputDiv = document.querySelector(`#${idSelect} .c-select__input-div`);
         const activeSelects = document.querySelectorAll('.c-select__option-list .active');
+        const arrowIcon = document.querySelector(`#${idSelect} .c-select__arrow-icon`);
 
-        if (e.target.classList.contains('c-select__selected') || e.target.classList.contains('c-select__arrow')) {
-            if (activeSelects.length >= 2) {
-                activeSelects.forEach(select => {
-                    select.dataset.id !== idSelect && select.classList.toggle('active');
-                });                    
-            }
-
+        if (e.target.classList.contains('c-select__selected') ||
+            e.target.classList.contains('c-select__arrow') ||
+            e.target.classList.contains('c-select__arrow-icon')) {
             input.value = '';
             input.dispatchEvent(new Event('input'));
             selectedDiv.classList.toggle('active');
             inputDiv.classList.toggle('active');
+            arrowIcon.classList.toggle('active');
+
+            if (activeSelects.length >= 3) {
+                activeSelects.forEach(select => {
+                    select.dataset.id !== idSelect && select.classList.toggle('active');
+                });
+            }
         }
 
         e.target.classList.contains('c-select__dropdown-item') && handleOptionItemsClick(e, selectedDiv);
@@ -107,8 +118,9 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
             removeItemBtn.classList.add('c-select__selected-remove');
             selectedItemP.textContent = e.target.textContent;
             selectedItemDiv.appendChild(selectedItemP);
-            selectedItemDiv.appendChild(removeItemBtn);       
+            selectedItemDiv.appendChild(removeItemBtn);
             selectedDiv.appendChild(selectedItemDiv);
+
         }
     }
 
@@ -119,6 +131,7 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
         [...dropdownItem].find(item => item.textContent === e.target.parentElement.textContent)
             .classList.remove('c-select__dropdown-item_selected');
     }
+
     //filter function
     function filterOptionItems() {
         document.querySelector(`#${idSelect} .c-select__input`).addEventListener('input', (e) => {
@@ -136,6 +149,7 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
             } else firstOptionItem.textContent = '';
         });
     }
+
     //create initial HTML and put it inside parent element
     function createHTML() {
         const classList = {
@@ -149,16 +163,14 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
             dropdownItem: 'c-select__dropdown-item',
             arrow: 'c-select__arrow',
             selectedDiv: 'c-select__selected-div',
-            selectedP: 'c-select__selected-p',
-            selectedRemove: 'c-select__selected-remove'
         };
-        
+
         const selectElem = document.createElement('select');
         const selectOptionElem = document.createElement('option');
         const inputElem = document.createElement('input');
         const ulElem = document.createElement('ul');
         const liElem = document.createElement('li');
-        const container = document.querySelector(`.${parentContainer}`);
+        const container = document.querySelector(`.${config.parentContainer}`);
         let divElem = createDiv(); // use to create mu;tiple divs elements
 
         selectElem.className = classList.select;
@@ -188,6 +200,9 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
         const selected = optionList.querySelector(`.${classList.selected}`);
         divElem = createDiv();
         divElem.className = classList.arrow;
+        divElem.innerHTML = `<svg width="14px" height="14px" viewBox="0 0 1024 1024" class="c-select__arrow-icon" 
+        data-id = ${idSelect} version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="#000000" /></svg>`;
         selected.appendChild(divElem);
         const inputDiv = optionList.querySelector(`.${classList.inputDiv}`);
         inputDiv.appendChild(inputElem);
@@ -199,9 +214,17 @@ function initSelect(idSelect, elemSize, optionList, parentContainer) {
     }
 }
 
-const uniqueID = () => Math.floor(Math.random() * Date.now()).toString();
-
-initSelect(`c-select${uniqueID()}`, 'parent', ["Fleet carrier administration", "Orbital 2", "Orbital 3",
-     "Orbital 4", "Orbital 5", "Orbital 6"], 'container-1');
-initSelect(`c-select${uniqueID()}`, 'parent', ["Orbital 4", "Orbital 5", "Orbital 6", 
-    "Fleet carrier administration", "Orbital 2", "Orbital 3"], 'container-2');
+initSelect({
+    elemSize: 'parent',
+    optionList: [
+        "Fleet carrier administration", "Orbital 2", "Orbital 3", "Orbital 4", "Orbital 5", "Orbital 6"
+    ],
+    parentContainer: 'container-1'
+});
+initSelect({
+    elemSize: 'parent',
+    optionList: [
+        "Fleet carrier administration", "Orbital 2", "Orbital 3", "Orbital 4", "Orbital 5", "Orbital 6"
+    ],
+    parentContainer: 'container-2'
+});

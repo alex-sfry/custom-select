@@ -60,7 +60,7 @@ ul {
         .c-select__input {
             width: calc($select-width-parent);
         }
-        
+
         .c-select__dropdown {
             width: calc($select-width-parent + $offset);
         }
@@ -87,7 +87,6 @@ ul {
         padding: 3px 18px 3px 3px;
         position: relative;
 
-
         &-div {
             cursor: pointer;
             background-color: $light-violet;
@@ -96,6 +95,7 @@ ul {
             width: fit-content;
             display: flex;
             align-items: center;
+            color: $white;
         }
 
         &-p {
@@ -108,13 +108,15 @@ ul {
         }
 
         &-remove {
-            background: red;
+            background: transparent;
             margin: 0 4px 0 5px;
             border-left: 1px solid $white;
             padding: 0 4px 0 5px;
             width: 14px;
             height: 14px;
             cursor: pointer;
+            background-image: url('../assets/cross.svg');
+            background-size: 100% 100%;
         }
     }
 
@@ -151,20 +153,20 @@ ul {
         overflow-y: auto;
         overflow-x: hidden;
 
-        &::-webkit-scrollbar, 
+        &::-webkit-scrollbar,
         &::-webkit-scrollbar-thumb {
             width: 12px;
         }
-        
+
         &::-webkit-scrollbar-track {
             background: #FBFBFB;
             border-radius: 0 0 5px 0;
             background-color: aqua;
         }
-        
+
         &::-webkit-scrollbar-thumb {
             border-radius: 5px;
-            background-color: $gray;	
+            background-color: $gray;
             border: none;
         }
     }
@@ -194,9 +196,16 @@ ul {
     &__arrow {
         width: 14px;
         height: 14px;
-        background: red;
         position: absolute;
         right: 2px;
-        top: 7px
+        top: 7px;
+
+        &-icon {
+            transition: 300ms linear;
+
+            &.active {
+                transform: rotateZ(-180deg);
+            }
+        }
     }
 }
