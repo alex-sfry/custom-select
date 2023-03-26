@@ -46,11 +46,17 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
     }
 
     function handleOutsideClick(e) {
-        if (document.querySelector(`#${idSelect} .c-select__selected`).classList.contains('active')) {
+        const selectedDiv = document.querySelector(`#${idSelect} .c-select__selected`);
+        const inputDiv = document.querySelector(`#${idSelect} .c-select__input-div`);
+        const arrowIcon = document.querySelector(`#${idSelect} .c-select__arrow-icon`);
+        const dropdown = document.querySelector(`#${idSelect} .c-select__dropdown`);
+
+        if (selectedDiv.classList.contains('active')) {
             if (isClickedOutside(e)) {
-                document.querySelector(`#${idSelect} .c-select__selected`).classList.remove('active');
-                document.querySelector(`#${idSelect} .c-select__input-div`).classList.remove('active');
-                document.querySelector(`#${idSelect} .c-select__arrow-icon`).classList.remove('active');
+                selectedDiv.classList.remove('active');
+                inputDiv.classList.remove('active');
+                arrowIcon.classList.remove('active');
+                dropdown.classList.remove('active');
             }
         }
     }
@@ -79,6 +85,7 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
         const inputDiv = document.querySelector(`#${idSelect} .c-select__input-div`);
         const activeSelects = document.querySelectorAll('.c-select__option-list .active');
         const arrowIcon = document.querySelector(`#${idSelect} .c-select__arrow-icon`);
+        const dropdown = document.querySelector(`#${idSelect} .c-select__dropdown`);
 
         if (e.target.classList.contains('c-select__selected') ||
             e.target.classList.contains('c-select__arrow') ||
@@ -88,19 +95,21 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
             selectedDiv.classList.toggle('active');
             inputDiv.classList.toggle('active');
             arrowIcon.classList.toggle('active');
+            dropdown.classList.toggle('active');
 
-            if (activeSelects.length >= 3) {
+            if (activeSelects.length >= 4) {
                 activeSelects.forEach(select => {
                     select.dataset.id !== idSelect && select.classList.toggle('active');
                 });
             }
         }
 
-        e.target.classList.contains('c-select__dropdown-item') && handleOptionItemsClick(e, selectedDiv);
+        e.target.classList.contains('c-select__dropdown-item') && handleOptionItemsClick(e);
         e.target.classList.contains('c-select__selected-remove') && handleSelectedClick(e);
     }
 
-    function handleOptionItemsClick(e, selectedDiv) {
+    function handleOptionItemsClick(e) {
+        const selectedDiv = document.querySelector(`#${idSelect} .c-select__selected`);
         if (e.target === firstOptionItem) return;
         const selectedArr = [];
         const selectedItems = selectedDiv.querySelectorAll('.c-select__selected-div');
@@ -120,7 +129,6 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
             selectedItemDiv.appendChild(selectedItemP);
             selectedItemDiv.appendChild(removeItemBtn);
             selectedDiv.appendChild(selectedItemDiv);
-
         }
     }
 
@@ -134,7 +142,8 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
 
     //filter function
     function filterOptionItems() {
-        document.querySelector(`#${idSelect} .c-select__input`).addEventListener('input', (e) => {
+        const input = document.querySelector(`#${idSelect} .c-select__input`);
+        input.addEventListener('input', (e) => {
             const dropdownItems = document.querySelectorAll(`#${idSelect} .c-select__dropdown-item`);
 
             dropdownItems.forEach((item, index) => {
@@ -172,7 +181,7 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
         const liElem = document.createElement('li');
         const container = document.querySelector(`.${config.parentContainer}`);
         let divElem = createDiv(); // use to create mu;tiple divs elements
-
+        
         selectElem.className = classList.select;
         inputElem.className = classList.input;
         ulElem.className = classList.dropdown;
@@ -180,6 +189,7 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
         divElem.className = classList.wrapper;
 
         selectElem.appendChild(selectOptionElem);
+        ulElem.dataset.id = idSelect;
         ulElem.appendChild(liElem);
         divElem.appendChild(selectElem);
         container.appendChild(divElem);
