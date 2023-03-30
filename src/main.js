@@ -4,7 +4,7 @@ function initSelect(config) {
     if (!config.optionList) return;
     const uniqueID = () => Math.floor(Math.random() * Date.now()).toString();
     const idSelect = `c-select${uniqueID()}`; //select element unique id
-    createHTML(idSelect, config.name);
+    createHTML(idSelect, config.name, config.type);
     createOptionList('option', config.optionList); //create options for native <select>
     createOptionList('li', config.optionList); //create option items for custom select (p elements inside div)
 
@@ -112,13 +112,14 @@ function initSelect(config) {
         const selectedDiv = document.querySelector(`#${idSelect} .c-select__selected`);
         if (e.target === firstOptionItem) return;
         const selectedArr = [];
-        const selectedItems = selectedDiv.querySelectorAll('.c-select__selected-div');
-        selectedItems.forEach((elem) => selectedArr.push(elem.textContent));
+        const selectedItems = selectedDiv.querySelectorAll('.c-select__selected-div');       
+        selectedItems.forEach(elem => selectedArr.push(elem.textContent));
         !selectedArr.includes(e.target.textContent) && addToSelected();
         e.target.classList.add('c-select__dropdown-item_selected');
 
         function addToSelected() {
             [...selectOptions].find(option => option.textContent === e.target.textContent).selected = true;
+            if (config.type !== 'multi' && selectedItems.length > 0) handleSingleSelect();
             const selectedItemDiv = document.createElement('div');
             const selectedItemP = document.createElement('p');
             const removeItemBtn = document.createElement('button');
@@ -129,14 +130,20 @@ function initSelect(config) {
             selectedItemDiv.appendChild(selectedItemP);
             selectedItemDiv.appendChild(removeItemBtn);
             selectedDiv.appendChild(selectedItemDiv);
-        }
+
+            function handleSingleSelect() {
+                const selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
+                selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
+                selectedItems[0].remove();
+            }
+        }  
     }
 
     function handleSelectedClick(e) {
         [...selectOptions].find(option => option.textContent === e.target.textContent).selected = false;
         e.target.parentElement.remove();
-        const dropdownItem = document.querySelectorAll('.c-select__dropdown-item_selected');
-        [...dropdownItem].find(item => item.textContent === e.target.parentElement.textContent)
+        const selectedDropdownItems = document.querySelectorAll('.c-select__dropdown-item_selected');
+        [...selectedDropdownItems].find(item => item.textContent === e.target.parentElement.textContent)
             .classList.remove('c-select__dropdown-item_selected');
     }
 
@@ -160,7 +167,7 @@ function initSelect(config) {
     }
 
     //create initial HTML and put it inside parent element
-    function createHTML(idSelect, name) {
+    function createHTML(idSelect, name, type) {
         const classList = {
             wrapper: 'c-select',
             select: 'c-select__select',
@@ -174,7 +181,8 @@ function initSelect(config) {
             selectedDiv: 'c-select__selected-div',
         };
         const container = document.querySelector(`.${config.parentContainer}`);
-        const selectElem = createElem('select', classList.select, [['name', name], ['multiple', 'multiple']]);
+        const selectElem = createElem('select', classList.select, [['name', name]]);
+        type === 'multi' ? selectElem.setAttribute('multiple', 'multiple') : null;
         const selectOptionElem = createElem('option');
         selectElem.appendChild(selectOptionElem);
         const inputElem = createElem('input', classList.input, [['type', 'text']]);
@@ -229,5 +237,6 @@ initSelect({
         "Fleet carrier administration", "Orbital 2", "Orbital 3", "Orbital 4", "Orbital 5", "Orbital 6"
     ],
     parentContainer: 'container-2',
-    name: 'station_services[]'
+    name: 'station_services[]',
+    type: 'multi'
 });
