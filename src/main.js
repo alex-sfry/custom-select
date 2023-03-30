@@ -1,10 +1,10 @@
 import './scss/styles.scss';
 
-function initSelect(config/* elemSize, optionList, parentContainer */) {
+function initSelect(config) {
     if (!config.optionList) return;
     const uniqueID = () => Math.floor(Math.random() * Date.now()).toString();
     const idSelect = `c-select${uniqueID()}`; //select element unique id
-    createHTML(idSelect);
+    createHTML(idSelect, config.name);
     createOptionList('option', config.optionList); //create options for native <select>
     createOptionList('li', config.optionList); //create option items for custom select (p elements inside div)
 
@@ -160,7 +160,7 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
     }
 
     //create initial HTML and put it inside parent element
-    function createHTML() {
+    function createHTML(idSelect, name) {
         const classList = {
             wrapper: 'c-select',
             select: 'c-select__select',
@@ -173,53 +173,44 @@ function initSelect(config/* elemSize, optionList, parentContainer */) {
             arrow: 'c-select__arrow',
             selectedDiv: 'c-select__selected-div',
         };
-
-        const selectElem = document.createElement('select');
-        const selectOptionElem = document.createElement('option');
-        const inputElem = document.createElement('input');
-        const ulElem = document.createElement('ul');
-        const liElem = document.createElement('li');
         const container = document.querySelector(`.${config.parentContainer}`);
-        let divElem = createDiv(); // use to create mu;tiple divs elements
-        
-        selectElem.className = classList.select;
-        inputElem.className = classList.input;
-        ulElem.className = classList.dropdown;
-        liElem.className = classList.dropdownItem;
-        divElem.className = classList.wrapper;
-
+        const selectElem = createElem('select', classList.select, [['name', name], ['multiple', 'multiple']]);
+        const selectOptionElem = createElem('option');
         selectElem.appendChild(selectOptionElem);
-        ulElem.dataset.id = idSelect;
+        const inputElem = createElem('input', classList.input, [['type', 'text']]);
+        const ulElem = createElem('ul', classList.dropdown, [['data-id', idSelect]]);
+        const liElem = createElem('li', classList.dropdownItem);
         ulElem.appendChild(liElem);
+        
+        let divElem = createElem('div', classList.wrapper);
         divElem.appendChild(selectElem);
         container.appendChild(divElem);
+
         const wrapper = container.querySelector(`.${classList.wrapper}`);
         wrapper.id = idSelect;
-        divElem = createDiv();
-        divElem.className = classList.optionList;
+        divElem = createElem('div', classList.optionList);
         wrapper.appendChild(divElem);
         const optionList = wrapper.querySelector(`.${classList.optionList}`);
-        divElem = createDiv();
-        divElem.className = classList.selected;
-        divElem.dataset.id = idSelect;
-        optionList.appendChild(divElem);
-        divElem = createDiv();
-        divElem.className = classList.inputDiv;
-        divElem.dataset.id = idSelect;
+        divElem = createElem('div', classList.selected, [['data-id', idSelect]]);
         optionList.appendChild(divElem);
         const selected = optionList.querySelector(`.${classList.selected}`);
-        divElem = createDiv();
-        divElem.className = classList.arrow;
+        divElem = createElem('div', classList.arrow);
         divElem.innerHTML = `<svg width="14px" height="14px" viewBox="0 0 1024 1024" class="c-select__arrow-icon" 
         data-id = ${idSelect} version="1.1" xmlns="http://www.w3.org/2000/svg">
         <path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="#000000" /></svg>`;
         selected.appendChild(divElem);
+        divElem =createElem('div', classList.inputDiv, [['data-id', idSelect]]);
+        optionList.appendChild(divElem);
         const inputDiv = optionList.querySelector(`.${classList.inputDiv}`);
         inputDiv.appendChild(inputElem);
         inputDiv.appendChild(ulElem);
 
-        function createDiv() {
-            return document.createElement('div');
+        function createElem(tagName, className, attrList) {
+            const newElem = document.createElement(tagName);
+            if (className) newElem.className = className; 
+            if (!attrList) return newElem;
+            for (const attr of attrList) newElem.setAttribute(attr[0], attr[1]);
+            return newElem;           
         }
     }
 }
@@ -229,12 +220,14 @@ initSelect({
     optionList: [
         "Fleet carrier administration", "Orbital 2", "Orbital 3", "Orbital 4", "Orbital 5", "Orbital 6"
     ],
-    parentContainer: 'container-1'
+    parentContainer: 'container-1',
+    name: 'station_type[]'
 });
 initSelect({
     elemSize: 'parent',
     optionList: [
         "Fleet carrier administration", "Orbital 2", "Orbital 3", "Orbital 4", "Orbital 5", "Orbital 6"
     ],
-    parentContainer: 'container-2'
+    parentContainer: 'container-2',
+    name: 'station_services[]'
 });
