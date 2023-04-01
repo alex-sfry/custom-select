@@ -14,16 +14,15 @@ ul {
     list-style-type: none;
 }
 
-@mixin width($width) {
-    width: $width;
+.select {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
-    .c-select__input {
-        width: calc($width - 2*$input-div-padding - $offset);
-    }
-
-    .c-select__dropdown {
-        width: $width;
-    }
+.isHidden {
+    display: none;
 }
 
 .c-select {
@@ -32,39 +31,7 @@ ul {
     font-size: $font-size-main;
     font-weight: inherit;
     line-height: $line-height;
-
-    .isHidden,
-    &__select {
-        display: none;
-    }
-
-    &_size_S {
-        @include width($select-width-S);
-    }
-
-    &_size_M {
-        @include width($select-width-M);
-    }
-
-    &_size_L {
-        @include width($select-width-L);
-    }
-
-    &_size_XL {
-        @include width($select-width-XL);
-    }
-
-    &_size_parent {
-        width: $select-width-parent;
-
-        .c-select__input {
-            width: calc($select-width-parent);
-        }
-
-        .c-select__dropdown {
-            width: calc($select-width-parent + $offset);
-        }
-    }
+    max-width: 100%;
 
     &__input {
         outline: 0;
@@ -74,6 +41,7 @@ ul {
         font-family: inherit;
         font-size: inherit;
         line-height: inherit;
+        width: 100%;
     }
 
     &__selected {
@@ -155,6 +123,7 @@ ul {
         overflow-y: auto;
         overflow-x: hidden;
         transition: opacity 300ms linear;
+        width: calc(100% + $offset);
 
         &.active {
             height: fit-content;
