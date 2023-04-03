@@ -2,7 +2,8 @@
 
 Usage:
 
-import { Select } from 'src/select.js'
+*import { Select } from 'select.js'*
+or include *<script src="select.js" ></script>* in HTML
 
 new Select({
     select: '',
