@@ -15,7 +15,7 @@ module.exports = {
     port: 3000,
   },
   entry: {
-    main: path.resolve(__dirname, './src/main.js')
+    main: path.resolve(__dirname, './src/index.js')
   },
   plugins: [
     new HtmlWebpackPlugin({

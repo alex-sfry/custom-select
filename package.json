@@ -1,8 +1,8 @@
 {
-  "name": "multi_select",
+  "name": "custom_select",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "description": "custom select element wrapper with search/filter",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --config webpack.dev.js",
@@ -10,7 +10,7 @@
 	"delghpages": "git push origin --delete gh-pages",
     "ghpages": "git subtree push --prefix dist origin gh-pages"
   },
-  "keywords": [],
+  "keywords": ["select", "custom select", "dropdown"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
