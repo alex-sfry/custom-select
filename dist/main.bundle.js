@@ -115,29 +115,33 @@ var Select = /*#__PURE__*/function () {
       selectedItems.forEach(function (elem) {
         return selectedArr.push(elem.textContent);
       });
-      !selectedArr.includes(e.target.textContent) && addToSelected(this.selectOptions, config);
+      !selectedArr.includes(e.target.textContent) && this.addToSelected(e, this.selectOptions, config, selectedDiv, selectedItems);
       e.target.classList.add('c-select__dropdown-item_selected');
-      function addToSelected(selectOptions, config) {
-        _toConsumableArray(selectOptions).find(function (option) {
-          return option.textContent === e.target.textContent;
-        }).selected = true;
-        if (config.type !== 'multi' && selectedItems.length > 0) handleSingleSelect();
-        var selectedItemDiv = document.createElement('div');
-        var selectedItemP = document.createElement('p');
-        var removeItemBtn = document.createElement('button');
-        selectedItemDiv.classList.add('c-select__selected-div');
-        selectedItemP.classList.add('c-select__selected-p');
-        removeItemBtn.classList.add('c-select__selected-remove');
-        selectedItemP.textContent = e.target.textContent;
-        selectedItemDiv.appendChild(selectedItemP);
-        selectedItemDiv.appendChild(removeItemBtn);
-        selectedDiv.appendChild(selectedItemDiv);
-        function handleSingleSelect() {
-          var selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
-          selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
-          selectedItems[0].remove();
-        }
-      }
+    }
+  }, {
+    key: "addToSelected",
+    value: function addToSelected(e, selectOptions, config, selectedDiv, selectedItems) {
+      _toConsumableArray(selectOptions).find(function (option) {
+        return option.textContent === e.target.textContent;
+      }).selected = true;
+      if (config.type !== 'multi' && selectedItems.length > 0) this.handleSingleSelect(selectedItems);
+      var selectedItemDiv = document.createElement('div');
+      var selectedItemP = document.createElement('p');
+      var removeItemBtn = document.createElement('button');
+      selectedItemDiv.classList.add('c-select__selected-div');
+      selectedItemP.classList.add('c-select__selected-p');
+      removeItemBtn.classList.add('c-select__selected-remove');
+      selectedItemP.textContent = e.target.textContent;
+      selectedItemDiv.appendChild(selectedItemP);
+      selectedItemDiv.appendChild(removeItemBtn);
+      selectedDiv.appendChild(selectedItemDiv);
+    }
+  }, {
+    key: "handleSingleSelect",
+    value: function handleSingleSelect(selectedItems) {
+      var selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
+      selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
+      selectedItems[0].remove();
     }
   }, {
     key: "handleSelectedClick",
@@ -193,59 +197,61 @@ var Select = /*#__PURE__*/function () {
         arrow: 'c-select__arrow',
         selectedDiv: 'c-select__selected-div'
       };
-      var inputElem = createElem('input', classList.input, [['type', 'text']]);
-      var ulElem = createElem('ul', classList.dropdown, [['data-id', this.idSelect]]);
-      var liElem = createElem('li', classList.dropdownItem);
+      var inputElem = this.Elem('input', classList.input, [['type', 'text']]);
+      var ulElem = this.Elem('ul', classList.dropdown, [['data-id', this.idSelect]]);
+      var liElem = this.Elem('li', classList.dropdownItem);
       ulElem.appendChild(liElem);
-      var divElem = createElem('div', classList.wrapper);
+      var divElem = this.Elem('div', classList.wrapper);
       divElem.style.width = "".concat(this.select.offsetWidth, "px");
       this.select.parentNode.insertBefore(divElem, this.select);
       divElem.appendChild(this.select);
       this.select.classList.add("isHidden");
       var wrapper = divElem;
       wrapper.id = this.idSelect;
-      divElem = createElem('div', classList.optionList);
+      divElem = this.Elem('div', classList.optionList);
       wrapper.appendChild(divElem);
       var optionList = wrapper.querySelector(".".concat(classList.optionList));
-      divElem = createElem('div', classList.selected, [['data-id', this.idSelect]]);
+      divElem = this.Elem('div', classList.selected, [['data-id', this.idSelect]]);
       optionList.appendChild(divElem);
       var selected = optionList.querySelector(".".concat(classList.selected));
-      divElem = createElem('div', classList.arrow);
+      divElem = this.Elem('div', classList.arrow);
       divElem.innerHTML = "<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 1024 1024\" class=\"c-select__arrow-icon\" \n\t\tdata-id = ".concat(this.idSelect, " version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n\t\t<path d=\"M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z\" fill=\"#000000\" /></svg>");
       selected.appendChild(divElem);
-      divElem = createElem('div', classList.inputDiv, [['data-id', this.idSelect]]);
+      divElem = this.Elem('div', classList.inputDiv, [['data-id', this.idSelect]]);
       optionList.appendChild(divElem);
       var inputDiv = optionList.querySelector(".".concat(classList.inputDiv));
       inputDiv.appendChild(inputElem);
       inputDiv.appendChild(ulElem);
-      function createElem(tagName, className, attrList) {
-        var newElem = document.createElement(tagName);
-        if (className) newElem.className = className;
-        if (!attrList) return newElem;
-        var _iterator = _createForOfIteratorHelper(attrList),
-          _step;
-        try {
-          for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var attr = _step.value;
-            newElem.setAttribute(attr[0], attr[1]);
-          }
-        } catch (err) {
-          _iterator.e(err);
-        } finally {
-          _iterator.f();
+    }
+  }, {
+    key: "Elem",
+    value: function Elem(tagName, className, attrList) {
+      var newElem = document.createElement(tagName);
+      if (className) newElem.className = className;
+      if (!attrList) return newElem;
+      var _iterator = _createForOfIteratorHelper(attrList),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var attr = _step.value;
+          newElem.setAttribute(attr[0], attr[1]);
         }
-        return newElem;
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
       }
+      return newElem;
     }
   }]);
   return Select;
 }();
 ;// CONCATENATED MODULE: ./src/index.js
 
-var select1 = new Select({
+new Select({
   select: 'sel1'
 });
-var select2 = new Select({
+new Select({
   select: 'sel2',
   type: 'multi'
 });

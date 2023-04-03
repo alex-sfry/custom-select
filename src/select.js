@@ -102,29 +102,30 @@ export class Select {
         const selectedArr = [];
         const selectedItems = selectedDiv.querySelectorAll('.c-select__selected-div');
         selectedItems.forEach(elem => selectedArr.push(elem.textContent));
-        !selectedArr.includes(e.target.textContent) && addToSelected(this.selectOptions, config);
+        !selectedArr.includes(e.target.textContent) &&
+            this.addToSelected(e, this.selectOptions, config, selectedDiv, selectedItems);
         e.target.classList.add('c-select__dropdown-item_selected');
+    }
 
-        function addToSelected(selectOptions, config) {
-            [...selectOptions].find(option => option.textContent === e.target.textContent).selected = true;
-            if (config.type !== 'multi' && selectedItems.length > 0) handleSingleSelect();
-            const selectedItemDiv = document.createElement('div');
-            const selectedItemP = document.createElement('p');
-            const removeItemBtn = document.createElement('button');
-            selectedItemDiv.classList.add('c-select__selected-div');
-            selectedItemP.classList.add('c-select__selected-p');
-            removeItemBtn.classList.add('c-select__selected-remove');
-            selectedItemP.textContent = e.target.textContent;
-            selectedItemDiv.appendChild(selectedItemP);
-            selectedItemDiv.appendChild(removeItemBtn);
-            selectedDiv.appendChild(selectedItemDiv);
+    addToSelected(e, selectOptions, config, selectedDiv, selectedItems) {
+        [...selectOptions].find(option => option.textContent === e.target.textContent).selected = true;
+        if (config.type !== 'multi' && selectedItems.length > 0) this.handleSingleSelect(selectedItems);
+        const selectedItemDiv = document.createElement('div');
+        const selectedItemP = document.createElement('p');
+        const removeItemBtn = document.createElement('button');
+        selectedItemDiv.classList.add('c-select__selected-div');
+        selectedItemP.classList.add('c-select__selected-p');
+        removeItemBtn.classList.add('c-select__selected-remove');
+        selectedItemP.textContent = e.target.textContent;
+        selectedItemDiv.appendChild(selectedItemP);
+        selectedItemDiv.appendChild(removeItemBtn);
+        selectedDiv.appendChild(selectedItemDiv);
+    }
 
-            function handleSingleSelect() {
-                const selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
-                selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
-                selectedItems[0].remove();
-            }
-        }
+    handleSingleSelect(selectedItems) {
+        const selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
+        selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
+        selectedItems[0].remove();
     }
 
     handleSelectedClick(e) {
@@ -176,12 +177,12 @@ export class Select {
             selectedDiv: 'c-select__selected-div',
         };
 
-        const inputElem = createElem('input', classList.input, [['type', 'text']]);
-        const ulElem = createElem('ul', classList.dropdown, [['data-id', this.idSelect]]);
-        const liElem = createElem('li', classList.dropdownItem);
+        const inputElem = this.Elem('input', classList.input, [['type', 'text']]);
+        const ulElem = this.Elem('ul', classList.dropdown, [['data-id', this.idSelect]]);
+        const liElem = this.Elem('li', classList.dropdownItem);
         ulElem.appendChild(liElem);
 
-        let divElem = createElem('div', classList.wrapper);
+        let divElem = this.Elem('div', classList.wrapper);
         divElem.style.width = `${this.select.offsetWidth}px`;
         this.select.parentNode.insertBefore(divElem, this.select);
         divElem.appendChild(this.select);
@@ -189,30 +190,29 @@ export class Select {
 
         const wrapper = divElem;
         wrapper.id = this.idSelect;
-        divElem = createElem('div', classList.optionList);
+        divElem = this.Elem('div', classList.optionList);
         wrapper.appendChild(divElem);
         const optionList = wrapper.querySelector(`.${classList.optionList}`);
-        divElem = createElem('div', classList.selected, [['data-id', this.idSelect]]);
+        divElem = this.Elem('div', classList.selected, [['data-id', this.idSelect]]);
         optionList.appendChild(divElem);
         const selected = optionList.querySelector(`.${classList.selected}`);
-        divElem = createElem('div', classList.arrow);
+        divElem = this.Elem('div', classList.arrow);
         divElem.innerHTML = `<svg width="14px" height="14px" viewBox="0 0 1024 1024" class="c-select__arrow-icon" 
 		data-id = ${this.idSelect} version="1.1" xmlns="http://www.w3.org/2000/svg">
 		<path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="#000000" /></svg>`;
         selected.appendChild(divElem);
-        divElem = createElem('div', classList.inputDiv, [['data-id', this.idSelect]]);
+        divElem = this.Elem('div', classList.inputDiv, [['data-id', this.idSelect]]);
         optionList.appendChild(divElem);
         const inputDiv = optionList.querySelector(`.${classList.inputDiv}`);
         inputDiv.appendChild(inputElem);
         inputDiv.appendChild(ulElem);
+    }
 
-        function createElem(tagName, className, attrList) {
-            const newElem = document.createElement(tagName);
-            if (className) newElem.className = className;
-            if (!attrList) return newElem;
-            for (const attr of attrList) newElem.setAttribute(attr[0], attr[1]);
-            return newElem;
-        }
+    Elem(tagName, className, attrList) {
+        const newElem = document.createElement(tagName);
+        if (className) newElem.className = className;
+        if (!attrList) return newElem;
+        for (const attr of attrList) newElem.setAttribute(attr[0], attr[1]);
+        return newElem;
     }
 }
-
