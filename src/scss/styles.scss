@@ -8,7 +8,6 @@
     padding: 0;
     border: 0;
     box-sizing: border-box;
-    //c
 }
 
 body {
@@ -32,6 +31,15 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+%_btn-remove {
+    cursor: pointer;
+    background: transparent;            
+    background-size: 100% 100%;           
+    padding: 0 4px 0 5px;           
+    width: 14px;
+    height: 14px;
 }
 
 .c-select {
@@ -80,20 +88,23 @@ ul {
         &-p {
             @extend %_overflow-hidden;
             display: inline-block;
-            padding-left: 5px;
+            padding: 0 5px 0 5px;
             width: min-content;
         }
 
         &-remove {
-            background: transparent;
-            margin: 0 4px 0 5px;
-            border-left: 1px solid $white;
-            padding: 0 4px 0 5px;
-            width: 14px;
-            height: 14px;
-            cursor: pointer;
+            @extend %_btn-remove;
             background-image: url('../assets/cross.svg');
-            background-size: 100% 100%;
+            margin-right: 3px;
+            border-left: 1px solid $white;
+        }
+
+        &-single-remove {
+            @extend %_btn-remove;
+            background-image: url('../assets/cross-black.svg');
+            position: absolute;
+            top: calc(50% - 7px);
+            right: 20px;
         }
 
         &:hover {
