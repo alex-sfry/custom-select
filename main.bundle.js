@@ -80,14 +80,10 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 var Select = /*#__PURE__*/function () {
   function Select(config) {
     _classCallCheck(this, Select);
-    if (!config.select) {
-      return console.log('provide id of select element');
-    }
+    if (!config.select) return console.log('provide id of select element');
     this.select = document.querySelector("#".concat(config.select));
     this.multi = this.select.multiple;
-    if (!this.select) {
-      return console.log("select element with id '".concat(config.select, "' not found"));
-    }
+    if (!this.select) return console.log("select element with id '".concat(config.select, "' not found"));
     this.createHTML = createHTML.bind(this);
     this.idSelect = "c-select".concat(this.uniqueID());
     this.options = this.select.querySelectorAll('option');
@@ -97,6 +93,16 @@ var Select = /*#__PURE__*/function () {
     this.selectOptions = document.querySelectorAll("#".concat(this.idSelect, " option"));
     this.setEventListeners(config);
     this.filterOptionItems();
+    this.input = document.querySelector("#".concat(this.idSelect, " .c-select__input"));
+    this.selectedDiv = document.querySelector("#".concat(this.idSelect, " .c-select__selected"));
+    this.inputDiv = document.querySelector("#".concat(this.idSelect, " .c-select__input-div"));
+    this.arrowIcon = document.querySelector("#".concat(this.idSelect, " .c-select__arrow-icon"));
+    this.dropdown = document.querySelector("#".concat(this.idSelect, " .c-select__dropdown"));
+    this.SPACEBAR_KEY_CODE = 32;
+    this.ENTER_KEY_CODE = 13;
+    this.UP_KEY_CODE = 38;
+    this.DOWN_KEY_CODE = 40;
+    this.dropdownItems = document.querySelectorAll("#".concat(this.idSelect, " .c-select__dropdown-item"));
   }
   _createClass(Select, [{
     key: "uniqueID",
@@ -105,17 +111,17 @@ var Select = /*#__PURE__*/function () {
     }
   }, {
     key: "setEventListeners",
-    value: function setEventListeners(config) {
+    value: function setEventListeners() {
       var _this = this;
       document.querySelector("#".concat(this.idSelect, " .c-select__option-list")).addEventListener('click', function (e) {
-        return _this.handleClick(e, _this.idSelect, config);
+        return _this.handleClick(e);
       });
       document.querySelector('body').addEventListener('click', function (e) {
-        return _this.handleOutsideClick(e, _this.idSelect);
+        return _this.handleOutsideClick(e);
       });
       document.querySelectorAll("#".concat(this.idSelect, " .c-select__dropdown-item")).forEach(function (item) {
         return item.addEventListener("keydown", function (e) {
-          return _this.handleKeyboard(e, _this.idSelect, config);
+          return _this.handleKeyboard(e);
         });
       });
       document.querySelectorAll(".c-select__dropdown-item").forEach(function (item) {
@@ -126,127 +132,110 @@ var Select = /*#__PURE__*/function () {
     }
   }, {
     key: "handleKeyboard",
-    value: function handleKeyboard(e, idSelect, config) {
+    value: function handleKeyboard(e) {
+      var _this2 = this;
       if (!e.target.classList.contains('c-select__dropdown-item')) return;
-      var SPACEBAR_KEY_CODE = 32;
-      var ENTER_KEY_CODE = 13;
-      var UP_KEY_CODE = 38;
-      var DOWN_KEY_CODE = 40;
-      var dropdownItems = document.querySelectorAll("#".concat(idSelect, " .c-select__dropdown-item"));
-      switch (e.keyCode) {
-        case ENTER_KEY_CODE:
-          this.handleClick(e, idSelect, config);
-          break;
-        case SPACEBAR_KEY_CODE:
-          this.handleClick(e, idSelect, config);
-          break;
-        case UP_KEY_CODE:
-          dropdownItems.forEach(function (item, index) {
-            if (item === e.target) {
-              item.dispatchEvent(new Event('blur'));
-              index > 1 ? dropdownItems[index - 1].dispatchEvent(new Event('focus')) : dropdownItems[dropdownItems.length - 1].dispatchEvent(new Event('focus'));
-            }
-          });
-          break;
-        case DOWN_KEY_CODE:
-          dropdownItems.forEach(function (item, index) {
-            if (item === e.target) {
-              item.dispatchEvent(new Event('blur'));
-              index < dropdownItems.length - 1 ? dropdownItems[index + 1].dispatchEvent(new Event('focus')) : dropdownItems[1].dispatchEvent(new Event('focus'));
-            }
-          });
-          break;
+      e.keyCode === this.ENTER_KEY_CODE || e.keyCode === this.SPACEBAR_KEY_CODE ? this.handleClick(e) : null;
+      if (e.keyCode === this.UP_KEY_CODE) {
+        this.dropdownItems.forEach(function (item, index) {
+          if (item === e.target) {
+            index > 1 ? _this2.dropdownItems[index - 1].dispatchEvent(new Event('focus')) : _this2.dropdownItems[_this2.dropdownItems.length - 1].dispatchEvent(new Event('focus'));
+          }
+        });
       }
-    }
-  }, {
-    key: "handleOutsideClick",
-    value: function handleOutsideClick(e, idSelect) {
-      var selectedDiv = document.querySelector("#".concat(idSelect, " .c-select__selected"));
-      var inputDiv = document.querySelector("#".concat(idSelect, " .c-select__input-div"));
-      var arrowIcon = document.querySelector("#".concat(idSelect, " .c-select__arrow-icon"));
-      var dropdown = document.querySelector("#".concat(idSelect, " .c-select__dropdown"));
-      if (selectedDiv.classList.contains('active')) {
-        if (this.isClickedOutside(e)) {
-          selectedDiv.classList.remove('active');
-          inputDiv.classList.remove('active');
-          arrowIcon.classList.remove('active');
-          dropdown.classList.remove('active');
-        }
+      if (e.keyCode === this.DOWN_KEY_CODE) {
+        this.dropdownItems.forEach(function (item, index) {
+          if (item === e.target) {
+            index < _this2.dropdownItems.length - 1 ? _this2.dropdownItems[index + 1].dispatchEvent(new Event('focus')) : _this2.dropdownItems[1].dispatchEvent(new Event('focus'));
+          }
+        });
       }
     }
   }, {
     key: "isClickedOutside",
     value: function isClickedOutside(e) {
-      var _this2 = this;
+      var _this3 = this;
       var classListArr = ['c-select__selected', 'c-select__input-div', 'c-select__input', 'c-select__dropdown-item', 'c-select__dropdown', 'c-select__arrow', 'c-select__arrow-icon', 'c-select__selected-div', 'c-select__selected-p', 'c-select__selected-remove'];
       this.isOutside = true;
       classListArr.forEach(function (item) {
-        return e.target.classList.contains(item) ? _this2.isOutside = false : undefined;
+        return e.target.classList.contains(item) ? _this3.isOutside = false : undefined;
       });
       return this.isOutside;
     }
   }, {
     key: "handleClick",
-    value: function handleClick(e, idSelect, config) {
-      var _this3 = this;
-      var input = document.querySelector("#".concat(idSelect, " .c-select__input"));
-      var selectedDiv = document.querySelector("#".concat(idSelect, " .c-select__selected"));
-      var inputDiv = document.querySelector("#".concat(idSelect, " .c-select__input-div"));
+    value: function handleClick(e) {
+      var _this4 = this;
       var activeSelects = document.querySelectorAll(".c-select__option-list .active");
-      var arrowIcon = document.querySelector("#".concat(idSelect, " .c-select__arrow-icon"));
-      var dropdown = document.querySelector("#".concat(idSelect, " .c-select__dropdown"));
       if (e.target.classList.contains('c-select__selected') || e.target.classList.contains('c-select__arrow') || e.target.classList.contains('c-select__arrow-icon')) {
-        input.value = '';
-        input.dispatchEvent(new Event('input'));
-        selectedDiv.classList.toggle('active');
-        inputDiv.classList.toggle('active');
-        arrowIcon.classList.toggle('active');
-        dropdown.classList.toggle('active');
+        this.input.value = '';
+        this.input.dispatchEvent(new Event('input'));
+        this.selectedDiv.classList.toggle('active');
+        this.inputDiv.classList.toggle('active');
+        this.arrowIcon.classList.toggle('active');
+        this.dropdown.classList.toggle('active');
         if (activeSelects.length >= 4) {
           activeSelects.forEach(function (select) {
-            select.dataset.id !== _this3.idSelect && select.classList.toggle('active');
+            select.dataset.id !== _this4.idSelect && select.classList.toggle('active');
           });
         }
       }
-      e.target.classList.contains('c-select__dropdown-item') && this.handleOptionItemsClick(e, this.idSelect, config);
-      e.target.classList.contains('c-select__selected-remove') && this.handleSelectedClick(e, this.selectOptions);
+      e.target.classList.contains('c-select__dropdown-item') && this.handleOptionItemsClick(e, this.selectedDiv);
+      e.target.classList.contains('c-select__selected-remove') || e.target.classList.contains('c-select__selected-single-remove') ? this.handleSelectedClick(e, this.selectOptions) : null;
+    }
+  }, {
+    key: "handleOutsideClick",
+    value: function handleOutsideClick(e) {
+      var selectedDiv = document.querySelector("#".concat(this.idSelect, " .c-select__selected"));
+      var inputDiv = document.querySelector("#".concat(this.idSelect, " .c-select__input-div"));
+      var arrowIcon = document.querySelector("#".concat(this.idSelect, " .c-select__arrow-icon"));
+      if (selectedDiv.classList.contains('active')) {
+        if (this.isClickedOutside(e)) {
+          selectedDiv.classList.remove('active');
+          inputDiv.classList.remove('active');
+          arrowIcon.classList.remove('active');
+          this.dropdown.classList.remove('active');
+        }
+      }
     }
   }, {
     key: "handleOptionItemsClick",
-    value: function handleOptionItemsClick(e, idSelect, config) {
-      var selectedDiv = document.querySelector("#".concat(idSelect, " .c-select__selected"));
+    value: function handleOptionItemsClick(e, selectedDiv) {
       if (e.target === this.firstOptionItem) return;
       var selectedArr = [];
       var selectedItems = selectedDiv.querySelectorAll('.c-select__selected-div');
       selectedItems.forEach(function (elem) {
         return selectedArr.push(elem.textContent);
       });
-      !selectedArr.includes(e.target.textContent) && this.addToSelected(e, this.selectOptions, config, selectedDiv, selectedItems);
+      !selectedArr.includes(e.target.textContent) && this.addToSelected(e, this.selectOptions, selectedDiv, selectedItems);
       e.target.classList.add('c-select__dropdown-item_selected');
     }
   }, {
     key: "addToSelected",
-    value: function addToSelected(e, selectOptions, config, selectedDiv, selectedItems) {
-      if (!this.multi && selectedItems.length > 0) {
-        this.handleSingleSelect(e, selectedItems, selectOptions);
-      }
+    value: function addToSelected(e, selectOptions, selectedDiv, selectedItems) {
+      if (!this.multi && selectedItems.length > 0) this.handleSingleSelect(selectedItems);
       _toConsumableArray(selectOptions).find(function (option) {
         return option.value === e.target.textContent;
       }).selected = true;
       var selectedItemDiv = document.createElement('div');
       var selectedItemP = document.createElement('p');
-      var removeItemBtn = document.createElement('button');
       selectedItemDiv.classList.add('c-select__selected-div');
       selectedItemP.classList.add('c-select__selected-p');
-      removeItemBtn.classList.add('c-select__selected-remove');
       selectedItemP.textContent = e.target.textContent;
       selectedItemDiv.appendChild(selectedItemP);
-      selectedItemDiv.appendChild(removeItemBtn);
+      var removeItemBtn = document.createElement('button');
+      if (this.multi) {
+        removeItemBtn.classList.add('c-select__selected-remove');
+        selectedItemDiv.appendChild(removeItemBtn);
+      } else {
+        removeItemBtn.classList.add('c-select__selected-single-remove');
+        selectedItemDiv.appendChild(removeItemBtn);
+      }
       selectedDiv.appendChild(selectedItemDiv);
     }
   }, {
     key: "handleSingleSelect",
-    value: function handleSingleSelect(e, selectedItems) {
+    value: function handleSingleSelect(selectedItems) {
       var selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
       selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
       selectedItems[0].remove();
@@ -278,18 +267,17 @@ var Select = /*#__PURE__*/function () {
   }, {
     key: "filterOptionItems",
     value: function filterOptionItems() {
-      var _this4 = this;
+      var _this5 = this;
       var input = document.querySelector("#".concat(this.idSelect, " .c-select__input"));
       input.addEventListener('input', function (e) {
-        var dropdownItems = document.querySelectorAll("#".concat(_this4.idSelect, " .c-select__dropdown-item"));
-        dropdownItems.forEach(function (item, index) {
+        _this5.dropdownItems.forEach(function (item, index) {
           !item.textContent.toLowerCase().includes(e.target.value.toLowerCase()) && index !== 0 ? item.classList.add('isHidden') : item.classList.remove('isHidden');
         });
-        if (_toConsumableArray(dropdownItems).filter(function (elem) {
+        if (_toConsumableArray(_this5.dropdownItems).filter(function (elem) {
           return elem.classList.contains('isHidden');
-        }).length === dropdownItems.length - 1) {
-          _this4.firstOptionItem.textContent = 'no results';
-        } else _this4.firstOptionItem.textContent = '';
+        }).length === _this5.dropdownItems.length - 1) {
+          _this5.firstOptionItem.textContent = 'no results';
+        } else _this5.firstOptionItem.textContent = '';
       });
     }
   }]);
