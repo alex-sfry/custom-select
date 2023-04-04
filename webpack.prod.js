@@ -8,7 +8,7 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 module.exports = {
   mode: 'production',
   entry: {
-    main: path.resolve(__dirname, './src/select.js')
+    main: path.resolve(__dirname, './src/index.js')
   },
   plugins: [
     new HtmlWebpackPlugin({
