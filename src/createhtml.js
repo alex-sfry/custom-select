@@ -28,6 +28,10 @@ export default function createHTML() {
     wrapper.appendChild(divElem);
     const optionList = wrapper.querySelector(`.${classList.optionList}`);
     divElem = createElement('div', classList.selected, [['data-id', this.idSelect]]);
+
+    //if single select add specific class
+    !this.isMulti ? divElem.classList.add('c-select__selected_single') : null;
+
     optionList.appendChild(divElem);
     const selected = optionList.querySelector(`.${classList.selected}`);
     divElem = createElement('div', classList.arrow);

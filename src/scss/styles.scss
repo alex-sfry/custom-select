@@ -42,6 +42,13 @@ ul {
     height: 14px;
 }
 
+%_font-default-settings {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+}
+
 .c-select {
     background: #fff;
     font-family: inherit;
@@ -51,13 +58,11 @@ ul {
     max-width: 100%;
 
     &__input {
+        @extend %_font-default-settings;
         outline: 0;
         border: $main-border;
         border-radius: 5px;
         box-shadow: rgba(9, 30, 66, 0.25) 0px 0px 1px 1px, rgba(9, 30, 66, 0.25) 0px 0px 1px 1px;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
         width: 100%;
     }
 
@@ -73,6 +78,10 @@ ul {
         position: relative;
         transition: border-radius 300ms linear;
 
+        &_single {
+            padding-right: 38px;
+        }
+
         &-div {
             @extend %_overflow-hidden;
             cursor: pointer;
@@ -83,6 +92,8 @@ ul {
             display: flex;
             align-items: center;
             color: $white;
+            animation-name: scaleUp;
+            animation-duration: 300ms;
         }
 
         &-p {
@@ -94,6 +105,7 @@ ul {
 
         &-remove {
             @extend %_btn-remove;
+            @extend %_font-default-settings;
             background-image: url('../assets/cross.svg');
             margin-right: 3px;
             border-left: 1px solid $white;
@@ -101,10 +113,18 @@ ul {
 
         &-single-remove {
             @extend %_btn-remove;
+            @extend %_font-default-settings;
             background-image: url('../assets/cross-black.svg');
             position: absolute;
             top: calc(50% - 7px);
             right: 20px;
+            animation-name: scaleUp;
+            animation-duration: 300ms;
+        }
+
+        @keyframes scaleUp {
+            from {scale: 0%;}
+            to {scale: 100%;}
         }
 
         &:hover {

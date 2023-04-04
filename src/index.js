@@ -1,8 +1,8 @@
-import { Select } from './select.js';
+import Select from './select.js';
 
 new Select({
-    select: 'sel1',
+    select: 'select1',
 });
 new Select({
-    select: 'sel2',
+    select: 'select2',
 });
