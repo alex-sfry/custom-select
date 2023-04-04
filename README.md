@@ -1,15 +1,13 @@
 # custom-select
 
 Usage:
+1. copy all files in scr.
 
-*import { Select } from 'select.js'*
-or include *<script src="select.js" ></script>* in HTML
+2. import { Select } from 'select.js'
 
-new Select({
-    select: '',
-    type: '',
-});
+3.
+	new Select({
+		select: '',
+	});
 
 select - id of existing select element
-
-type - 'multi' for multi select
