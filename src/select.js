@@ -1,4 +1,4 @@
-import './styles.scss';
+import './scss/styles.scss';
 import createHTML from './createhtml.js';
 
 export class Select {
