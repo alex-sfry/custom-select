@@ -8,21 +8,30 @@
     padding: 0;
     border: 0;
     box-sizing: border-box;
+    //c
+}
+
+body {
+    overflow-x: hidden;
 }
 
 ul {
     list-style-type: none;
 }
 
-.select {
-    width: 100%;
+.isHidden {
+    display: none;
+}
+
+.select-hidden {
+    position: absolute;
+    visibility: hidden;
+}
+
+%_overflow-hidden {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-
-.isHidden {
-    display: none;
 }
 
 .c-select {
@@ -57,6 +66,7 @@ ul {
         transition: border-radius 300ms linear;
 
         &-div {
+            @extend %_overflow-hidden;
             cursor: pointer;
             background-color: $light-violet;
             border-radius: 5px;
@@ -68,12 +78,10 @@ ul {
         }
 
         &-p {
+            @extend %_overflow-hidden;
             display: inline-block;
             padding-left: 5px;
             width: min-content;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
         }
 
         &-remove {
@@ -124,10 +132,13 @@ ul {
         overflow-x: hidden;
         transition: opacity 300ms linear;
         width: calc(100% + $offset);
+        visibility: hidden;
+       
 
         &.active {
             height: fit-content;
             max-height: $height-option-list;
+            visibility: visible;
             opacity: 1;
         }
 
@@ -149,12 +160,15 @@ ul {
     }
 
     &__dropdown-item {
+        @extend %_overflow-hidden;
         cursor: pointer;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         padding: 0 5px 0 5px;
         transition: background-color 200ms linear;
+
+        &:focus {
+            outline: 0;
+            background-color: $light-violet;
+        }
 
         &_selected {
             background-color: $light-violet;

@@ -1,4 +1,5 @@
 import './scss/styles.scss';
+import createHTML from './createhtml.js';
 
 export class Select {
     constructor(config) {
@@ -7,11 +8,13 @@ export class Select {
         }
 
         this.select = document.querySelector(`#${config.select}`);
+        this.multi = this.select.multiple;
 
         if (!this.select) {
             return console.log(`select element with id '${config.select}' not found`);
         }
 
+        this.createHTML = createHTML.bind(this);
         this.idSelect = `c-select${this.uniqueID()}`;
         this.options = this.select.querySelectorAll('option');
         this.createHTML();
@@ -29,8 +32,53 @@ export class Select {
     setEventListeners(config) {
         document.querySelector(`#${this.idSelect} .c-select__option-list`)
             .addEventListener('click', (e) => this.handleClick(e, this.idSelect, config));
+
         document.querySelector('body')
             .addEventListener('click', (e) => this.handleOutsideClick(e, this.idSelect));
+        
+        document.querySelectorAll(`#${this.idSelect} .c-select__dropdown-item`)
+            .forEach(item => item.addEventListener("keydown", (e) => this.handleKeyboard(e, this.idSelect, config)));
+
+        document.querySelectorAll(`.c-select__dropdown-item`).forEach(item => {
+            item.addEventListener('focus', (e) => e.target.focus());
+        });
+    }
+
+    handleKeyboard(e, idSelect, config) {
+        if (!e.target.classList.contains('c-select__dropdown-item')) return;
+        const SPACEBAR_KEY_CODE = 32;
+        const ENTER_KEY_CODE = 13;
+        const UP_KEY_CODE = 38;
+        const DOWN_KEY_CODE = 40;
+        const dropdownItems = document.querySelectorAll(`#${idSelect} .c-select__dropdown-item`);
+        
+        switch (e.keyCode) {
+            case ENTER_KEY_CODE :
+                this.handleClick(e, idSelect, config);
+                break;
+            case SPACEBAR_KEY_CODE :
+                this.handleClick(e, idSelect, config);
+                break;
+            case UP_KEY_CODE :
+                dropdownItems.forEach((item, index) => {
+                    if (item === e.target) {
+                        item.dispatchEvent(new Event('blur'));
+                        index > 1 ? dropdownItems[index - 1].dispatchEvent(new Event('focus'))
+                        : dropdownItems[dropdownItems.length - 1]
+                            .dispatchEvent(new Event('focus'));                       
+                    }
+                });
+                break;
+            case DOWN_KEY_CODE :
+                dropdownItems.forEach((item, index) => {
+                    if (item === e.target) {
+                        item.dispatchEvent(new Event('blur'));
+                        index < dropdownItems.length - 1 ? dropdownItems[index + 1].dispatchEvent(new Event('focus'))
+                        : dropdownItems[1].dispatchEvent(new Event('focus'));   
+                    }
+                });
+            break;                       
+        }
     }
 
     handleOutsideClick(e, idSelect) {
@@ -71,7 +119,7 @@ export class Select {
         const input = document.querySelector(`#${idSelect} .c-select__input`);
         const selectedDiv = document.querySelector(`#${idSelect} .c-select__selected`);
         const inputDiv = document.querySelector(`#${idSelect} .c-select__input-div`);
-        const activeSelects = document.querySelectorAll('.c-select__option-list .active');
+        const activeSelects = document.querySelectorAll(`.c-select__option-list .active`);
         const arrowIcon = document.querySelector(`#${idSelect} .c-select__arrow-icon`);
         const dropdown = document.querySelector(`#${idSelect} .c-select__dropdown`);
 
@@ -93,7 +141,7 @@ export class Select {
         }
 
         e.target.classList.contains('c-select__dropdown-item') && this.handleOptionItemsClick(e, this.idSelect, config);
-        e.target.classList.contains('c-select__selected-remove') && this.handleSelectedClick(e);
+        e.target.classList.contains('c-select__selected-remove') && this.handleSelectedClick(e, this.selectOptions);
     }
 
     handleOptionItemsClick(e, idSelect, config) {
@@ -108,8 +156,10 @@ export class Select {
     }
 
     addToSelected(e, selectOptions, config, selectedDiv, selectedItems) {
-        [...selectOptions].find(option => option.textContent === e.target.textContent).selected = true;
-        if (config.type !== 'multi' && selectedItems.length > 0) this.handleSingleSelect(selectedItems);
+        if (!this.multi && selectedItems.length > 0){
+            this.handleSingleSelect(e, selectedItems, selectOptions);
+        } 
+        [...selectOptions].find(option => option.value === e.target.textContent).selected = true;       
         const selectedItemDiv = document.createElement('div');
         const selectedItemP = document.createElement('p');
         const removeItemBtn = document.createElement('button');
@@ -122,14 +172,16 @@ export class Select {
         selectedDiv.appendChild(selectedItemDiv);
     }
 
-    handleSingleSelect(selectedItems) {
+    handleSingleSelect(e, selectedItems) {
         const selectedDropdownItem = document.querySelector('.c-select__dropdown-item_selected');
         selectedDropdownItem.classList.remove('c-select__dropdown-item_selected');
         selectedItems[0].remove();
     }
 
-    handleSelectedClick(e) {
-        [...this.selectOptions].find(option => option.textContent === e.target.textContent).selected = false;
+    handleSelectedClick(e, selectOptions) {
+        [...selectOptions].find(option =>{
+            return option.value === e.target.previousSibling.textContent;
+        }).selected = false;
         e.target.parentElement.remove();
         const selectedDropdownItems = document.querySelectorAll('.c-select__dropdown-item_selected');
         [...selectedDropdownItems].find(item => item.textContent === e.target.parentElement.textContent)
@@ -142,6 +194,7 @@ export class Select {
             const dropdownItemList = document.querySelector(`#${this.idSelect} .c-select__dropdown`);
             optionItem.classList.add("c-select__dropdown-item");
             optionItem.textContent = this.options[i].value;
+            optionItem.tabIndex='0';
             dropdownItemList.appendChild(optionItem);
         }
     }
@@ -162,57 +215,5 @@ export class Select {
                 this.firstOptionItem.textContent = 'no results';
             } else this.firstOptionItem.textContent = '';
         });
-    }
-
-    createHTML() {
-        const classList = {
-            wrapper: 'c-select',
-            optionList: 'c-select__option-list',
-            selected: 'c-select__selected',
-            inputDiv: 'c-select__input-div',
-            input: 'c-select__input',
-            dropdown: 'c-select__dropdown',
-            dropdownItem: 'c-select__dropdown-item',
-            arrow: 'c-select__arrow',
-            selectedDiv: 'c-select__selected-div',
-        };
-
-        const inputElem = this.Elem('input', classList.input, [['type', 'text']]);
-        const ulElem = this.Elem('ul', classList.dropdown, [['data-id', this.idSelect]]);
-        const liElem = this.Elem('li', classList.dropdownItem);
-        ulElem.appendChild(liElem);
-
-        let divElem = this.Elem('div', classList.wrapper);
-        divElem.style.width = `${this.select.offsetWidth}px`;
-        this.select.parentNode.insertBefore(divElem, this.select);
-        divElem.appendChild(this.select);
-        this.select.classList.add("isHidden");
-
-        const wrapper = divElem;
-        wrapper.id = this.idSelect;
-        divElem = this.Elem('div', classList.optionList);
-        wrapper.appendChild(divElem);
-        const optionList = wrapper.querySelector(`.${classList.optionList}`);
-        divElem = this.Elem('div', classList.selected, [['data-id', this.idSelect]]);
-        optionList.appendChild(divElem);
-        const selected = optionList.querySelector(`.${classList.selected}`);
-        divElem = this.Elem('div', classList.arrow);
-        divElem.innerHTML = `<svg width="14px" height="14px" viewBox="0 0 1024 1024" class="c-select__arrow-icon" 
-		data-id = ${this.idSelect} version="1.1" xmlns="http://www.w3.org/2000/svg">
-		<path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="#000000" /></svg>`;
-        selected.appendChild(divElem);
-        divElem = this.Elem('div', classList.inputDiv, [['data-id', this.idSelect]]);
-        optionList.appendChild(divElem);
-        const inputDiv = optionList.querySelector(`.${classList.inputDiv}`);
-        inputDiv.appendChild(inputElem);
-        inputDiv.appendChild(ulElem);
-    }
-
-    Elem(tagName, className, attrList) {
-        const newElem = document.createElement(tagName);
-        if (className) newElem.className = className;
-        if (!attrList) return newElem;
-        for (const attr of attrList) newElem.setAttribute(attr[0], attr[1]);
-        return newElem;
     }
 }

@@ -10,11 +10,12 @@
 
 <body>
     <div class="container"
-        style='width: 100vw; height: 500px; display: flex; justify-content: center; gap: 20px; padding-top: 230px'>
+        style='width: 100vw; height: 500px; display: flex; justify-content: center; gap: 20px; padding-top: 230px;'>
         <div class="container-1"
             style='width: 300px; padding: 0 20px 0 20px; font-family: "Open Sans", sans-serif; font-weight: 400;'>
-            <select id="sel1" name="station_type[]" class="select" multiple="multiple">
-                <option></option>
+            <label for="sel1">sel1</label>
+            <select id="sel1" name="station_type[]" class="select" style="width: 100%;">
+                <option value="Select Value">Select Value</option>
                 <option value="Fleet carrier administration">Fleet carrier administration</option>
                 <option value="Orbital 1">Orbital 1</option>
                 <option value="Orbital 2">Orbital 2</option>
@@ -27,8 +28,9 @@
         </div>
         <div class="container-2"
             style='width: 300px; padding: 0 20px 0 20px; font-family: "Open Sans", sans-serif; font-weight: 400;'>
-            <select id="sel2" name="station_services[]" class="select" multiple="multiple">
-                <option></option>
+            <label for="sel2">sel2</label>
+            <select id="sel2" name="station_services[]" class="select" multiple="multiple" style="width: 100%;">
+                <option value="Select Value">Select Value</option>
                 <option value="Fleet carrier administration">Fleet carrier administration</option>
                 <option value="Orbital 1">Orbital 1</option>
                 <option value="Orbital 2">Orbital 2</option>

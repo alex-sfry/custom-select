@@ -5,5 +5,4 @@ new Select({
 });
 new Select({
     select: 'sel2',
-    type: 'multi',
 });
