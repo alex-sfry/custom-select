@@ -3,9 +3,7 @@
 Custom select dropdown with search field.
 Single or multi value support.
 
-Wraps around existing select element.
-
-
+Wraps around existing select element.<br>
 new Select({
 	select: '',
 });
