@@ -1,13 +1,13 @@
 # custom-select
 
-Usage:
-1. copy all files in scr.
+Custom select dropdown with search field.
+Single or multi value support.
 
-2. import Select from 'select.js'
+Wraps around existing select element.
 
-3.
-	new Select({
-		select: '',
-	});
+
+new Select({
+	select: '',
+});
 
 select - id of existing select element
