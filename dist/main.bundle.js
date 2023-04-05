@@ -2,126 +2,20 @@
 /******/ 	"use strict";
 var __webpack_exports__ = {};
 
-;// CONCATENATED MODULE: ./src/createhtml.js
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function createHTML() {
-  var classList = {
-    wrapper: 'c-select',
-    optionList: 'c-select__option-list',
-    selected: 'c-select__selected',
-    inputDiv: 'c-select__input-div',
-    input: 'c-select__input',
-    dropdown: 'c-select__dropdown',
-    dropdownItem: 'c-select__dropdown-item',
-    arrow: 'c-select__arrow',
-    selectedDiv: 'c-select__selected-div'
-  };
-  var inputElem = createElement('input', classList.input, [['type', 'text']]);
-  var ulElem = createElement('ul', classList.dropdown, [['data-id', this.idSelect]]);
-  var liElem = createElement('li', classList.dropdownItem);
-  ulElem.appendChild(liElem);
-  var divElem = createElement('div', classList.wrapper);
-  divElem.style.width = "".concat(this.select.offsetWidth, "px");
-  this.select.parentNode.insertBefore(divElem, this.select);
-  divElem.appendChild(this.select);
-  this.select.classList.add("select-hidden");
-  var wrapper = divElem;
-  wrapper.id = this.idSelect;
-  divElem = createElement('div', classList.optionList);
-  wrapper.appendChild(divElem);
-  var optionList = wrapper.querySelector(".".concat(classList.optionList));
-  divElem = createElement('div', classList.selected, [['data-id', this.idSelect]]);
-
-  //if single select add specific class
-  !this.isMulti ? divElem.classList.add('c-select__selected_single') : null;
-  optionList.appendChild(divElem);
-  var selected = optionList.querySelector(".".concat(classList.selected));
-  divElem = createElement('div', classList.arrow);
-  divElem.innerHTML = "<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 1024 1024\" class=\"c-select__arrow-icon\" \n    data-id = ".concat(this.idSelect, " version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z\" fill=\"#000000\" /></svg>");
-  selected.appendChild(divElem);
-  divElem = createElement('div', classList.inputDiv, [['data-id', this.idSelect]]);
-  optionList.appendChild(divElem);
-  var inputDiv = optionList.querySelector(".".concat(classList.inputDiv));
-  inputDiv.appendChild(inputElem);
-  inputDiv.appendChild(ulElem);
-}
-function createElement(tagName, className, attrList) {
-  var newElem = document.createElement(tagName);
-  if (className) newElem.className = className;
-  if (!attrList) return newElem;
-  var _iterator = _createForOfIteratorHelper(attrList),
-    _step;
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var attr = _step.value;
-      newElem.setAttribute(attr[0], attr[1]);
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-  return newElem;
-}
-;// CONCATENATED MODULE: ./src/handle-keyboard.js
-function handleKeyboard(e) {
-  var _this = this;
-  if (!e.target.classList.contains('c-select__dropdown-item')) return;
-  e.keyCode === this.ENTER_KEY_CODE || e.keyCode === this.SPACEBAR_KEY_CODE ? this.handleClick(e) : null;
-  if (e.keyCode === this.UP_KEY_CODE) {
-    this.dropdownItems.forEach(function (item, index) {
-      if (item === e.target) {
-        index > 1 ? _this.dropdownItems[index - 1].dispatchEvent(new Event('focus')) : _this.dropdownItems[_this.dropdownItems.length - 1].dispatchEvent(new Event('focus'));
-      }
-    });
-  }
-  if (e.keyCode === this.DOWN_KEY_CODE) {
-    this.dropdownItems.forEach(function (item, index) {
-      if (item === e.target) {
-        index < _this.dropdownItems.length - 1 ? _this.dropdownItems[index + 1].dispatchEvent(new Event('focus')) : _this.dropdownItems[1].dispatchEvent(new Event('focus'));
-      }
-    });
-  }
-}
-;// CONCATENATED MODULE: ./src/filter-option-items.js
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || filter_option_items_unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function filter_option_items_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return filter_option_items_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return filter_option_items_arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return filter_option_items_arrayLikeToArray(arr); }
-function filter_option_items_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function filterOptionItems() {
-  var _this = this;
-  var input = document.querySelector("#".concat(this.idSelect, " .c-select__input"));
-  input.addEventListener('input', function (e) {
-    _this.dropdownItems.forEach(function (item, index) {
-      !item.textContent.toLowerCase().includes(e.target.value.toLowerCase()) && index !== 0 ? item.classList.add('isHidden') : item.classList.remove('isHidden');
-    });
-    if (_toConsumableArray(_this.dropdownItems).filter(function (elem) {
-      return elem.classList.contains('isHidden');
-    }).length === _this.dropdownItems.length - 1) {
-      _this.firstOptionItem.textContent = 'no results';
-    } else _this.firstOptionItem.textContent = '';
-  });
-}
 ;// CONCATENATED MODULE: ./src/select.js
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function select_toConsumableArray(arr) { return select_arrayWithoutHoles(arr) || select_iterableToArray(arr) || select_unsupportedIterableToArray(arr) || select_nonIterableSpread(); }
-function select_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function select_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return select_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return select_arrayLikeToArray(o, minLen); }
-function select_iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function select_arrayWithoutHoles(arr) { if (Array.isArray(arr)) return select_arrayLikeToArray(arr); }
-function select_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-
-
-
 
 var Select = /*#__PURE__*/function () {
   function Select(config) {
@@ -130,9 +24,6 @@ var Select = /*#__PURE__*/function () {
     this.select = document.querySelector("#".concat(config.select));
     this.isMulti = this.select.multiple;
     if (!this.select) return console.log("select element with id '".concat(config.select, "' not found"));
-    this.createHTML = createHTML.bind(this);
-    this.handleKeyboard = handleKeyboard.bind(this);
-    this.filterOptionItems = filterOptionItems.bind(this);
     this.idSelect = "c-select".concat(this.uniqueID());
     this.options = this.select.querySelectorAll('option');
     this.createHTML();
@@ -229,10 +120,10 @@ var Select = /*#__PURE__*/function () {
       !this.isMulti ? this.removeElem(document.querySelector("#".concat(this.idSelect, " .c-select__selected-single-remove"))) : null;
       this.removeElem(elemToRemove);
       var selectedDropdownItems = document.querySelectorAll('.c-select__dropdown-item_selected');
-      select_toConsumableArray(selectOptions).find(function (option) {
+      _toConsumableArray(selectOptions).find(function (option) {
         return option.value === selectedItemTextContent;
       }).selected = false;
-      select_toConsumableArray(selectedDropdownItems).find(function (item) {
+      _toConsumableArray(selectedDropdownItems).find(function (item) {
         return item.textContent === elemToRemove.textContent;
       }).classList.remove('c-select__dropdown-item_selected');
     }
@@ -252,7 +143,7 @@ var Select = /*#__PURE__*/function () {
     key: "addToSelected",
     value: function addToSelected(e, selectOptions, selectedDiv, selectedItems) {
       if (!this.isMulti && selectedItems.length > 0) this.handleSingleSelect(selectedItems);
-      select_toConsumableArray(selectOptions).find(function (option) {
+      _toConsumableArray(selectOptions).find(function (option) {
         return option.value === e.target.textContent;
       }).selected = true;
       var selectedItemDiv = document.createElement('div');
@@ -304,6 +195,106 @@ var Select = /*#__PURE__*/function () {
         return e.target.classList.contains(item) ? _this3.isOutside = false : undefined;
       });
       return this.isOutside;
+    }
+  }, {
+    key: "handleKeyboard",
+    value: function handleKeyboard(e) {
+      var _this4 = this;
+      if (!e.target.classList.contains('c-select__dropdown-item')) return;
+      e.keyCode === this.ENTER_KEY_CODE || e.keyCode === this.SPACEBAR_KEY_CODE ? this.handleClick(e) : null;
+      if (e.keyCode === this.UP_KEY_CODE) {
+        this.dropdownItems.forEach(function (item, index) {
+          if (item === e.target) {
+            index > 1 ? _this4.dropdownItems[index - 1].dispatchEvent(new Event('focus')) : _this4.dropdownItems[_this4.dropdownItems.length - 1].dispatchEvent(new Event('focus'));
+          }
+        });
+      }
+      if (e.keyCode === this.DOWN_KEY_CODE) {
+        this.dropdownItems.forEach(function (item, index) {
+          if (item === e.target) {
+            index < _this4.dropdownItems.length - 1 ? _this4.dropdownItems[index + 1].dispatchEvent(new Event('focus')) : _this4.dropdownItems[1].dispatchEvent(new Event('focus'));
+          }
+        });
+      }
+    }
+  }, {
+    key: "filterOptionItems",
+    value: function filterOptionItems() {
+      var _this5 = this;
+      var input = document.querySelector("#".concat(this.idSelect, " .c-select__input"));
+      input.addEventListener('input', function (e) {
+        _this5.dropdownItems.forEach(function (item, index) {
+          !item.textContent.toLowerCase().includes(e.target.value.toLowerCase()) && index !== 0 ? item.classList.add('isHidden') : item.classList.remove('isHidden');
+        });
+        if (_toConsumableArray(_this5.dropdownItems).filter(function (elem) {
+          return elem.classList.contains('isHidden');
+        }).length === _this5.dropdownItems.length - 1) {
+          _this5.firstOptionItem.textContent = 'no results';
+        } else _this5.firstOptionItem.textContent = '';
+      });
+    }
+  }, {
+    key: "createHTML",
+    value: function createHTML() {
+      var classList = {
+        wrapper: 'c-select',
+        optionList: 'c-select__option-list',
+        selected: 'c-select__selected',
+        inputDiv: 'c-select__input-div',
+        input: 'c-select__input',
+        dropdown: 'c-select__dropdown',
+        dropdownItem: 'c-select__dropdown-item',
+        arrow: 'c-select__arrow',
+        selectedDiv: 'c-select__selected-div'
+      };
+      var inputElem = this.createElement('input', classList.input, [['type', 'text']]);
+      var ulElem = this.createElement('ul', classList.dropdown, [['data-id', this.idSelect]]);
+      var liElem = this.createElement('li', classList.dropdownItem);
+      ulElem.appendChild(liElem);
+      var divElem = this.createElement('div', classList.wrapper);
+      divElem.style.width = "".concat(this.select.offsetWidth, "px");
+      this.select.parentNode.insertBefore(divElem, this.select);
+      divElem.appendChild(this.select);
+      this.select.classList.add("select-hidden");
+      var wrapper = divElem;
+      wrapper.id = this.idSelect;
+      divElem = this.createElement('div', classList.optionList);
+      wrapper.appendChild(divElem);
+      var optionList = wrapper.querySelector(".".concat(classList.optionList));
+      divElem = this.createElement('div', classList.selected, [['data-id', this.idSelect]]);
+
+      //if single select add specific class
+      !this.isMulti ? divElem.classList.add('c-select__selected_single') : null;
+      optionList.appendChild(divElem);
+      var selected = optionList.querySelector(".".concat(classList.selected));
+      divElem = this.createElement('div', classList.arrow);
+      divElem.innerHTML = "<svg width=\"14px\" height=\"14px\" viewBox=\"0 0 1024 1024\" class=\"c-select__arrow-icon\" \n        data-id = ".concat(this.idSelect, " version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n        <path d=\"M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z\" fill=\"#000000\" /></svg>");
+      selected.appendChild(divElem);
+      divElem = this.createElement('div', classList.inputDiv, [['data-id', this.idSelect]]);
+      optionList.appendChild(divElem);
+      var inputDiv = optionList.querySelector(".".concat(classList.inputDiv));
+      inputDiv.appendChild(inputElem);
+      inputDiv.appendChild(ulElem);
+    }
+  }, {
+    key: "createElement",
+    value: function createElement(tagName, className, attrList) {
+      var newElem = document.createElement(tagName);
+      if (className) newElem.className = className;
+      if (!attrList) return newElem;
+      var _iterator = _createForOfIteratorHelper(attrList),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var attr = _step.value;
+          newElem.setAttribute(attr[0], attr[1]);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      return newElem;
     }
   }]);
   return Select;

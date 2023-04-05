@@ -1,7 +1,4 @@
 import './scss/styles.scss';
-import createHTML from './createhtml.js';
-import handleKeyboard from './handle-keyboard.js';
-import filterOptionItems from './filter-option-items.js';
 
 export default class Select {
     constructor(config) {
@@ -9,10 +6,6 @@ export default class Select {
         this.select = document.querySelector(`#${config.select}`);
         this.isMulti = this.select.multiple;
         if (!this.select) return console.log(`select element with id '${config.select}' not found`);
-
-        this.createHTML = createHTML.bind(this);
-        this.handleKeyboard = handleKeyboard.bind(this);
-        this.filterOptionItems = filterOptionItems.bind(this);
 
         this.idSelect = `c-select${this.uniqueID()}`;
         this.options = this.select.querySelectorAll('option');
@@ -193,5 +186,104 @@ export default class Select {
         this.isOutside = true;
         classListArr.forEach(item => e.target.classList.contains(item) ? this.isOutside = false : undefined);
         return this.isOutside;
+    }
+
+    handleKeyboard(e) {
+        if (!e.target.classList.contains('c-select__dropdown-item')) return;
+    
+        e.keyCode === this.ENTER_KEY_CODE || e.keyCode === this.SPACEBAR_KEY_CODE ? this.handleClick(e) : null;
+    
+        if (e.keyCode === this.UP_KEY_CODE) {
+            this.dropdownItems.forEach((item, index) => {
+                if (item === e.target) {
+                    index > 1 ? this.dropdownItems[index - 1].dispatchEvent(new Event('focus'))
+                        : this.dropdownItems[this.dropdownItems.length - 1]
+                            .dispatchEvent(new Event('focus'));
+                }
+            });
+        }
+    
+        if (e.keyCode === this.DOWN_KEY_CODE) {
+            this.dropdownItems.forEach((item, index) => {
+                if (item === e.target) {
+                    index < this.dropdownItems.length - 1 ? this.dropdownItems[index + 1]
+                        .dispatchEvent(new Event('focus'))
+                        : this.dropdownItems[1].dispatchEvent(new Event('focus'));
+                }
+            });
+        }
+    }
+
+    filterOptionItems() {
+        const input = document.querySelector(`#${this.idSelect} .c-select__input`);
+        input.addEventListener('input', (e) => {
+    
+            this.dropdownItems.forEach((item, index) => {
+                !item.textContent.toLowerCase().includes(e.target.value.toLowerCase()) && index !== 0
+                    ? item.classList.add('isHidden') :
+                    item.classList.remove('isHidden');
+            });
+    
+            if ([...this.dropdownItems]
+                .filter(elem => elem.classList.contains('isHidden')).length === this.dropdownItems.length - 1) {
+                this.firstOptionItem.textContent = 'no results';
+            } else this.firstOptionItem.textContent = '';
+        });
+    }
+
+    createHTML() {
+        const classList = {
+            wrapper: 'c-select',
+            optionList: 'c-select__option-list',
+            selected: 'c-select__selected',
+            inputDiv: 'c-select__input-div',
+            input: 'c-select__input',
+            dropdown: 'c-select__dropdown',
+            dropdownItem: 'c-select__dropdown-item',
+            arrow: 'c-select__arrow',
+            selectedDiv: 'c-select__selected-div',
+        };
+    
+        const inputElem = this.createElement('input', classList.input, [['type', 'text']]);
+        const ulElem =  this.createElement('ul', classList.dropdown, [['data-id', this.idSelect]]);
+        const liElem =  this.createElement('li', classList.dropdownItem);
+        ulElem.appendChild(liElem);
+    
+        let divElem =  this.createElement('div', classList.wrapper);
+        divElem.style.width = `${this.select.offsetWidth}px`;
+        this.select.parentNode.insertBefore(divElem, this.select);
+        divElem.appendChild(this.select);
+        this.select.classList.add("select-hidden");
+    
+        const wrapper = divElem;
+        wrapper.id = this.idSelect;
+        divElem = this.createElement('div', classList.optionList);
+        wrapper.appendChild(divElem);
+        const optionList = wrapper.querySelector(`.${classList.optionList}`);
+        divElem =  this.createElement('div', classList.selected, [['data-id', this.idSelect]]);
+    
+        //if single select add specific class
+        !this.isMulti ? divElem.classList.add('c-select__selected_single') : null;
+    
+        optionList.appendChild(divElem);
+        const selected = optionList.querySelector(`.${classList.selected}`);
+        divElem =  this.createElement('div', classList.arrow);
+        divElem.innerHTML = `<svg width="14px" height="14px" viewBox="0 0 1024 1024" class="c-select__arrow-icon" 
+        data-id = ${this.idSelect} version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="#000000" /></svg>`;
+        selected.appendChild(divElem);
+        divElem =  this.createElement('div', classList.inputDiv, [['data-id', this.idSelect]]);
+        optionList.appendChild(divElem);
+        const inputDiv = optionList.querySelector(`.${classList.inputDiv}`);
+        inputDiv.appendChild(inputElem);
+        inputDiv.appendChild(ulElem);
+    }
+    
+    createElement(tagName, className, attrList) {
+        const newElem = document.createElement(tagName);
+        if (className) newElem.className = className;
+        if (!attrList) return newElem;
+        for (const attr of attrList) newElem.setAttribute(attr[0], attr[1]);
+        return newElem;
     }
 }

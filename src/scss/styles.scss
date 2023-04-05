@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
-@import 'variables.scss';
+
+$white: #FBFBFB;
+$gray: #787777;
+$light-violet: #9297f7;
+$offset: 2px;
+$main-border: 1px solid $gray;
+$input-div-padding: 7px;
+$font-size-main: 16px;
+$font-size-medium: 14px;
+$line-height: 1.5;
+$height-option-list: calc($font-size-main * $line-height * 10);
 
 *,
 *::before,
