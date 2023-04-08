@@ -50,6 +50,7 @@ ul {
     padding: 0 4px 0 5px;           
     width: 14px;
     height: 14px;
+    padding: 0;
 }
 
 %_font-default-settings {
@@ -116,15 +117,13 @@ ul {
         &-remove {
             @extend %_btn-remove;
             @extend %_font-default-settings;
-            background-image: url('../assets/cross.svg');
             margin-right: 3px;
             border-left: 1px solid $white;
         }
 
-        &-single-remove {
+        &-remove_single {
             @extend %_btn-remove;
             @extend %_font-default-settings;
-            background-image: url('../assets/cross-black.svg');
             position: absolute;
             top: calc(50% - 7px);
             right: 20px;
@@ -132,9 +131,20 @@ ul {
             animation-duration: 300ms;
         }
 
+        &-div.scale-down,
+        &-remove_single.scale-down {
+            animation-name: scaleDown;
+            animation-duration: 300ms;
+        }
+
         @keyframes scaleUp {
             from {scale: 0%;}
             to {scale: 100%;}
+        }
+
+        @keyframes scaleDown {
+            from {scale: 100%;}
+            to {scale: 0%;}
         }
 
         &:hover {
