@@ -6,6 +6,8 @@ Wraps around existing select element.
 <br>
 <br>
 
+import Select from 'main.min.js'
+
 new Select({
 	select: ''
 });
