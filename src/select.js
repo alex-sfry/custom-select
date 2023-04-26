@@ -132,7 +132,6 @@ export default class Select {
 
     addToSelected(e, selectOptions, selectedDiv, selectedItems) {
         if (!this.isMulti && selectedItems.length > 0) this.handleSingleSelect(selectedItems);
-
         [...selectOptions].find(option => option.value === e.target.textContent).selected = true;
         const selectedItemDiv = document.createElement('div');
         const selectedItemP = document.createElement('p');
@@ -140,8 +139,7 @@ export default class Select {
         selectedItemP.classList.add('c-select__selected-p');
         selectedItemP.textContent = e.target.textContent;
         selectedItemDiv.appendChild(selectedItemP);
-        const removeItemBtn = document.createElement('button');
-        
+        const removeItemBtn = document.createElement('button');       
         removeItemBtn.addEventListener('click', (e) => this.handleClick(e));
 
         if (this.isMulti) {
@@ -200,8 +198,7 @@ export default class Select {
     }
 
     handleKeyboard(e) {
-        if (!e.target.classList.contains('c-select__dropdown-item')) return;
-    
+        if (!e.target.classList.contains('c-select__dropdown-item')) return;    
         e.keyCode === this.ENTER_KEY_CODE || e.keyCode === this.SPACEBAR_KEY_CODE ? this.handleClick(e) : null;
     
         if (e.keyCode === this.UP_KEY_CODE) {
@@ -253,8 +250,7 @@ export default class Select {
             dropdownItem: 'c-select__dropdown-item',
             arrow: 'c-select__arrow',
             selectedDiv: 'c-select__selected-div',
-        };
-    
+        };   
         const inputElem = this.createElement('input', classList.input, [['type', 'text']]);
         const ulElem =  this.createElement('ul', classList.dropdown, [['data-id', this.idSelect]]);
         const liElem =  this.createElement('li', classList.dropdownItem);
@@ -290,7 +286,7 @@ export default class Select {
         inputDiv.appendChild(ulElem);
     }
     
-    createElement(tagName, className, attrList) {
+    createElement(tagName, className, attrList) { //attrList - array of arrays [[attribute, value]]
         const newElem = document.createElement(tagName);
         if (className) newElem.className = className;
         if (!attrList) return newElem;
