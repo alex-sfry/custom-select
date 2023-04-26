@@ -292,6 +292,7 @@ var Select = /*#__PURE__*/function () {
   }, {
     key: "createElement",
     value: function createElement(tagName, className, attrList) {
+      //attrList - array of arrays [[attribute, value]]
       var newElem = document.createElement(tagName);
       if (className) newElem.className = className;
       if (!attrList) return newElem;
